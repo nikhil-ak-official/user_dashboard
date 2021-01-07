@@ -1,0 +1,30 @@
+{
+  "name": "user_dashboard_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "env-cmd -f ./config/.env node server.js",
+    "dev": "env-cmd -f ./config/.env nodemon server.js",
+    "migrate": "env-cmd -f ./config/.env npx sequelize-cli db:migrate && env-cmd -f ./config/.env npx sequelize-cli db:seed:all",
+    "migrate_prod": "env-cmd -f ./config/.env npx sequelize-cli db:migrate --env production && env-cmd -f ./config/.env npx sequelize-cli db:seed:all --env production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sendgrid/mail": "^7.4.0",
+    "bcrypt": "^5.0.0",
+    "cors": "^2.8.5",
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.3.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6",
+    "sequelize-cli": "^6.2.0"
+  }
+}
