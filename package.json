@@ -5,9 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "env-cmd -f ./config/.env node server.js",
-    "dev": "env-cmd -f ./config/.env nodemon server.js",
-    "migrate": "env-cmd -f ./config/.env npx sequelize-cli db:migrate && env-cmd -f ./config/.env npx sequelize-cli db:seed:all",
-    "migrate_prod": "env-cmd -f ./config/.env npx sequelize-cli db:migrate --env production && env-cmd -f ./config/.env npx sequelize-cli db:seed:all --env production",
+    "dev":  "env-cmd -f ./config/.env npx sequelize-cli db:migrate && env-cmd -f ./config/.env npx sequelize-cli db:seed:all && env-cmd -f ./config/.env pm2 start server.js",
+    "prod": "env-cmd -f ./config/.env npx sequelize-cli db:migrate --env production && env-cmd -f ./config/.env npx sequelize-cli db:seed:all --env production  && env-cmd -f ./config/.env pm2 start server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

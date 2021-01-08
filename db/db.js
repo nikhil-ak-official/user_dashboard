@@ -5,8 +5,8 @@ const mysql = require('mysql2')
 //     host: 'localhost',
 //     dialect: 'mysql'
 // });
-const mysqlConnection = new Sequelize('heroku_9a66066370e9936', 'bde5318ebeaa85', process.env.MYSQL_PASSWORD_PRODUCTION, {
-    host: 'us-cdbr-east-02.cleardb.com',
+const mysqlConnection = new Sequelize('dbdashbo', 'usrdashbo', process.env.MYSQL_PASSWORD_PRODUCTION, {
+    host: '3.231.80.163',
     dialect: 'mysql'
 });
 

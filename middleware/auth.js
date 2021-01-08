@@ -32,6 +32,7 @@ const authenticateToken = async (req, res, next) => {
                     id: decode.role_id
                 }
             })
+            console.log(currentUser)
             if (token == currentUser.dataValues.token || token == currentUser.dataValues.resetPasswordToken) {
                 req.role = currentUserRole.dataValues.name
                 req.user = currentUser.dataValues

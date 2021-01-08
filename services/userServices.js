@@ -324,9 +324,6 @@ const editUser = async (req, res) => {
                 }
 
             }
-            else {
-                res.status(400).send("no such role exist or id entered is wrong")
-            }
         }
 
     }
@@ -352,6 +349,40 @@ const logoutUser = async (req, res) => {
     }
 }
 
+const deleteUser = async(req,res) => {
+    try{
+        if((req.role == "admin") && (req.params.id) && (req.params.id!= req.user.id)) {
+          if(req.editUserRole == "admin") {
+            res.status(400).send("cannot delete another admin ")
+          } 
+          else{
+              const user = await User.destroy({
+                  where: {
+                      id: req.params.id
+                  }
+              })
+              console.log(user)
+              res.sendStatus(200)
+          }
+        }
+        else {
+            if((req.role == "admin" || req.role == "user") && (!req.params.id)) {
+                const user = await User.destroy({
+                    where: {
+                        id: req.user.id
+                    }
+                })
+                console.log(user)
+                res.sendStatus(200)
+            }
+           
+        }
+ 
+    }
+    catch(err) {
+        res.status(400).send(err)
+    }
+}
 module.exports = {
     getUsersList,
     createUser,
@@ -362,5 +393,6 @@ module.exports = {
     forgotPassword,
     changePassword,
     editUser,
-    logoutUser
+    logoutUser,
+    deleteUser
 }

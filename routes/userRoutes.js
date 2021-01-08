@@ -13,7 +13,8 @@ const { getUsersList,
     forgotPassword,
     changePassword,
     editUser,
-    logoutUser
+    logoutUser,
+    deleteUser
 } = require('../services/userServices')
 
 
@@ -54,23 +55,7 @@ router.put('/:id?', authenticateToken, getRoleId, editUser)
 // logout
 router.post('/logout', authenticateToken, logoutUser)
 
-
-
-// router.post('/role', async (req, res) => {
-//     const roles = await Role.create(req.body)
-//     res.status(201).send(roles)
-// })
-
-// router.post('/admin', async (req, res) => {
-//     try {
-
-//         const createUser = await User.create(req.body)
-//         res.status(201).send(createUser.dataValues)
-//     }
-//     catch (err) {
-//         res.status(400).send(err)
-//     }
-
-// })
+// delete user
+router.delete('/delete/:id?', authenticateToken, getRoleId, deleteUser)
 
 module.exports = router

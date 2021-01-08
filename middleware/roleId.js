@@ -39,7 +39,7 @@ const getRoleId = async (req, res, next) => {
 
     }
     catch (err) {
-        res.status(400).send(err)
+        res.status(400).send("user with that id doesnt exist or user with role doesnt exist")
     }
 }
 
