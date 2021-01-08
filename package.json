@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "env-cmd -f ./config/.env nodemon server.js",
     "dev": "env-cmd -f ./config/.env npx sequelize-cli db:migrate && env-cmd -f ./config/.env npx sequelize-cli db:seed:all && env-cmd -f ./config/.env nodemon server.js",
     "migrate": "env-cmd -f ./config/.env npx sequelize-cli db:migrate --env production && env-cmd -f ./config/.env npx sequelize-cli db:seed:all --env production",
     "prod": "pm2 start server.js",
