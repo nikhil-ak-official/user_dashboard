@@ -117,7 +117,7 @@ const checkUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-
+        console.log("helloo")
             const existUser = await User.findOne({
                 where: {
                     email: req.body.email
