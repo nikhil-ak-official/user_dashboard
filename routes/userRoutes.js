@@ -30,7 +30,7 @@ router.post('/', authenticateToken, authorized(['admin']), getRoleId, createUser
 
 
 // create password 
-router.put('/password', authenticateToken, authorized(['admin', 'user']), createPassword)
+router.put('/password?action=setPassword', authenticateToken, authorized(['admin', 'user']), createPassword)
 
 // check if user exist and if new user
 router.post('/check', checkUser)

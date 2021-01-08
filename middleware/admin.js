@@ -3,8 +3,8 @@ const express = require('express')
 
 const authorized = (roles) => {
     return function (req, res, next) {
-        if (req.query.action == null && req.url == "/password") {
-            next()
+        if (req.user.status == "inactive") {
+            res.status(403).send("user inactive")
         }
         else {
             if (req.query.action == "setPassword") {
