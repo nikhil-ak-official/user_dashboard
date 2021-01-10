@@ -295,7 +295,7 @@ const editUser = async (req, res) => {
                     },
                     individualHooks: true
                 })
-                console.log(updatedUser);
+                console.log(updatedUser[1][0].dataValues);
                 const role = req.role
                 const editedUser = updateUser[1][0].dataValues
                 res.status(200).send({"success": 200, "message": "admin successfully edited user details", "data":{editedUser, role}})
