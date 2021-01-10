@@ -287,13 +287,14 @@ const editUser = async (req, res) => {
                 })
                 const {id, createdAt, updatedAt, ...others} = updateUser.dataValues;
                 console.log(others);
-                const updatedUser = await User.update(others, {
+                const updatedUser = await User.update({
+                    firstname: others.firstname
+                }, {
                     where: {
                         id: req.params.id
                     },
                     individualHooks: true
                 })
-                console.log("helo");
                 console.log(updatedUser);
                 const role = req.role
                 const editedUser = updateUser[1][0].dataValues
