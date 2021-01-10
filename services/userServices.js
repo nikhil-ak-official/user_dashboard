@@ -254,6 +254,7 @@ const changePassword = async (req, res) => {
 const editUser = async (req, res) => {
     try {
         if ((req.role == "admin") && (req.params.id) && (req.params.id != req.user.id)) {
+            console.log("in edit");
             if(req.editUserRole == "admin") {
                 res.status(400).send({"error": 400, "message": "cannot edit admin details"})
             }

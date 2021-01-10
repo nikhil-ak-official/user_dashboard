@@ -18,6 +18,7 @@ const getRoleId = async (req, res, next) => {
         }
         else {
             if(req.params.id) {
+                console.log(" in role");
                 const isAdmin = await User.findOne({
                     attributes: ['role_id'],
                     where: {
