@@ -9,9 +9,11 @@ const authorized = (roles) => {
         else {
             if (req.query.action == "setPassword") {
                 roles.filter(e => e != "admin")
+                console.log("hello");
             }
             const roleName = req.role
             if (roles.includes(roleName)) {
+                console.log("hello2");
                 console.log(roleName);
                 console.log(roles);
                 next()
