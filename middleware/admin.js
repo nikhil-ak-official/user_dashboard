@@ -7,9 +7,10 @@ const authorized = (roles) => {
             res.status(403).send("user inactive")
         }
         else {
+            console.log("hello");
             if (req.query.action == "setPassword") {
                 roles.filter(e => e != "admin")
-                console.log("hello");
+               
             }
             const roleName = req.role
             if (roles.includes(roleName)) {
