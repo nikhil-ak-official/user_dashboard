@@ -3,7 +3,8 @@ const Role = require('../models/role')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const { welcomeEmail, forgotPasswordEmail } = require('../emails/email')
-const authenticateToken = require('../middleware/auth')
+
+
 
 const getUsersList = async (req, res) => {
     try {

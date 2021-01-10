@@ -3,11 +3,11 @@ const express = require('express')
 
 const authorized = (roles) => {
     return function (req, res, next) {
+        console.log("hello");
         if (req.user.status == "inactive") {
             res.status(403).send("user inactive")
         }
         else {
-            console.log("hello");
             if (req.query.action == "setPassword") {
                 roles.filter(e => e != "admin")
                
