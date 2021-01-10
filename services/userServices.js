@@ -293,6 +293,7 @@ const editUser = async (req, res) => {
                     },
                     individualHooks: true
                 })
+                console.log("helo");
                 console.log(updatedUser);
                 const role = req.role
                 const editedUser = updateUser[1][0].dataValues
