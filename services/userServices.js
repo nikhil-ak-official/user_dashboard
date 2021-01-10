@@ -71,7 +71,6 @@ const createPassword = async (req, res) => {
         }
 
         else {
-            console.log("hello");
             const addPassword = await User.update({
                 password: req.body.password,
                 token: null
@@ -98,7 +97,6 @@ const checkUser = async (req, res) => {
                 email: req.body.email
             }
         })
-        console.log(checkEmail);
         if (checkEmail.status == "pending") {
             res.status(200).send({"success": 200, "message": "check if user exist and if new user", "data" : checkEmail.status})
         }
@@ -118,7 +116,6 @@ const checkUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        console.log("helloo")
             const existUser = await User.findOne({
                 where: {
                     email: req.body.email
@@ -227,7 +224,6 @@ const forgotPassword = async (req, res) => {
 const changePassword = async (req, res) => {
     try {
         const oldPasswordCheck = await bcrypt.compare(req.body.oldPassword, req.user.password)
-        console.log(oldPasswordCheck);
         if (oldPasswordCheck) {
             if (req.body.newPassword != req.body.oldPassword) {
                 const changePassword = await User.update({
@@ -283,7 +279,6 @@ const editUser = async (req, res) => {
                         id: req.params.id
                     }
                 });
-                console.log(updateUser);
                 updates.forEach(e => {
                     if (req.body[e]) {
                         updateUser[e] = req.body[e]
@@ -368,7 +363,6 @@ const deleteUser = async(req,res) => {
                       id: req.params.id
                   }
               })
-              console.log(user)
               res.sendStatus(200)
           }
         }
@@ -379,7 +373,6 @@ const deleteUser = async(req,res) => {
                         id: req.user.id
                     }
                 })
-                console.log(user)
                 res.sendStatus(200)
             }
            
