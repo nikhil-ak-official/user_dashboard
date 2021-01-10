@@ -254,7 +254,6 @@ const changePassword = async (req, res) => {
 const editUser = async (req, res) => {
     try {
         if ((req.role == "admin") && (req.params.id) && (req.params.id != req.user.id)) {
-            console.log("in edit");
             if(req.editUserRole == "admin") {
                 res.status(400).send({"error": 400, "message": "cannot edit admin details"})
             }
@@ -275,6 +274,7 @@ const editUser = async (req, res) => {
                 return res.status(400).send({"error": 400, "message": "please enter valid update keys"})
             }
             else {
+                console.log("in edit");
                 const updateUser = await User.findOne({
                     where: {
                         id: req.params.id
@@ -285,13 +285,14 @@ const editUser = async (req, res) => {
                         updateUser[e] = req.body[e]
                     }
                 })
-      
+                console.log(updateUser);
                 const editUser = await User.update(updateUser.dataValues, {
                     where: {
                         id: req.params.id
                     },
                     individualHooks: true
                 })
+                console.log(editUser);
                 const role = req.role
                 const editedUser = editUser[1][0].dataValues
                 res.status(200).send({"success": 200, "message": "admin successfully edited user details", "data":{editedUser, role}})
