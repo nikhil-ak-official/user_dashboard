@@ -12,6 +12,8 @@ const authorized = (roles) => {
             }
             const roleName = req.role
             if (roles.includes(roleName)) {
+                console.log(roleName);
+                console.log(roles);
                 next()
             }
             else {
