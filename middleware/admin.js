@@ -3,7 +3,6 @@ const express = require('express')
 
 const authorized = (roles) => {
     return function (req, res, next) {
-        console.log("hello");
         if (req.user.status == "inactive") {
             res.status(403).send("user inactive")
         }
@@ -14,9 +13,6 @@ const authorized = (roles) => {
             }
             const roleName = req.role
             if (roles.includes(roleName)) {
-                console.log("hello2");
-                console.log(roleName);
-                console.log(roles);
                 next()
             }
             else {

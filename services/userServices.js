@@ -227,6 +227,7 @@ const forgotPassword = async (req, res) => {
 const changePassword = async (req, res) => {
     try {
         const oldPasswordCheck = await bcrypt.compare(req.body.oldPassword, req.user.password)
+        console.log(oldPasswordCheck);
         if (oldPasswordCheck) {
             if (req.body.newPassword != req.body.oldPassword) {
                 const changePassword = await User.update({
