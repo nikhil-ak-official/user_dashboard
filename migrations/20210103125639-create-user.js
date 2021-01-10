@@ -56,7 +56,9 @@ module.exports = {
             len: [6,]
         },
         set(value) {
-          this.setDataValue('password', bcrypt.hashSync(value, 8)) 
+          if(value != null) {
+            this.setDataValue('password', bcrypt.hashSync(value, 8)) 
+          }
         }
       },
       token:{
