@@ -12,12 +12,10 @@ const authenticateToken = async (req, res, next) => {
             let decode;
             let token
             if (req.query.action == "setPassword" || req.query.action == "resetPassword" || req.query.action =="login") {
-                console.log(req.query.action);
                 token = req.query.token
                 decode = jwt.verify(token, process.env.RESET_TOKEN_SECRET_KEY)
             }
-            else {
-                console.log("in auth");
+            else {;
                 token = req.headers['authorization'].split(' ')[1]
                 decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY)
             }
@@ -33,7 +31,6 @@ const authenticateToken = async (req, res, next) => {
                     id: decode.role_id
                 }
             })
-            console.log(currentUser)
             if (token == currentUser.dataValues.token || token == currentUser.dataValues.resetPasswordToken) {
                 req.role = currentUserRole.dataValues.name
                 req.user = currentUser.dataValues
