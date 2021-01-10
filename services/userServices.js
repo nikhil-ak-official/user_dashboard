@@ -285,7 +285,7 @@ const editUser = async (req, res) => {
                         updateUser[e] = req.body[e]
                     }
                 })
-                const {id, password, token, resetPasswordToken, createdAt, updatedAt, ...others} = updateUser.dataValues;
+                const {id, ...others} = updateUser.dataValues;
                 const updatedUser = others
                 const editUser = await User.update(updatedUser, {
                     where: {
