@@ -286,14 +286,14 @@ const editUser = async (req, res) => {
                     }
                 })
                 const {id, ...others} = updateUser.dataValues;
-                const updatedUser = others
-                const editUser = await User.update(updatedUser, {
+                console.log(others);
+                const updatedUser = await User.update(others, {
                     where: {
                         id: req.params.id
                     },
                     individualHooks: true
                 })
-                console.log(editUser);
+                console.log(updatedUser);
                 const role = req.role
                 const editedUser = editUser[1][0].dataValues
                 res.status(200).send({"success": 200, "message": "admin successfully edited user details", "data":{editedUser, role}})
