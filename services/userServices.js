@@ -45,7 +45,7 @@ const createUser = async (req, res) => {
     try {
         const user = { ...others, role_id: req.roleId }
         const createUser = await User.create(user)
-        welcomeEmail(req.body.firstname, req.body.email, link + `?action=setPassword&token=${createUser.dataValues.resetPasswordToken}`)
+        welcomeEmail(req.body.firstname, req.body.email, link+`?action=setPassword&token=${createUser.dataValues.resetPasswordToken}`)
         const newUser = createUser.dataValues
         res.status(201).send({"success": 201, "message": "admin creates users", "data" : {newUser, role}})
     }
@@ -209,7 +209,7 @@ const forgotPassword = async (req, res) => {
                 },
                 individualHooks: true
             })
-            forgotPasswordEmail(updateResetToken[1][0].dataValues.firstname, updateResetToken[1][0].dataValues.email, req.body.link + `?action=${action}&token=${resetToken}`)
+            forgotPasswordEmail(updateResetToken[1][0].dataValues.firstname, updateResetToken[1][0].dataValues.email, req.body.link+`?action=${action}&token=${resetToken}`)
             res.status(200).send({"success": 200, "message":"mail sent"})
         }
         else {
@@ -286,7 +286,7 @@ const editUser = async (req, res) => {
                         updateUser[e] = req.body[e]
                     }
                 })
-                const {id, createdAt, updatedAt, password, ...others} = updateUser;
+                const {id, createdAt, updatedAt, password, ...others} = updateUser.dataValues;
                 const updatedUser = await User.update(others, {
                     where: {
                         id: req.params.id
