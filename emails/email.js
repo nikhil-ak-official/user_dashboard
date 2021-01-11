@@ -11,7 +11,7 @@ const welcomeEmail = async (name, user_email, link) => {
             from: 'nikku.a1998@gmail.com',
             subject: 'Welcome to Qburst' ,
             text: `Welcome ${name}, to our company QBurst. Click this link to direct to our page`,
-            html: `Welcome ${name}, to our company QBurst. Click this <a href=${link}</a> to direct to our page`
+            html: `Welcome ${name}, to our company QBurst. Click this <a href=${link}>link</a> to direct to our page`
         
         })
     }
