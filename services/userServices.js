@@ -67,8 +67,7 @@ const createPassword = async (req, res) => {
                 },
                 individualHooks: true
             })
-            res.status(200).send(addPassword)
-            // res.redirect(`/user/login?action=login&token=${req.token}`)
+            res.redirect(`http://user-dashboard.qburst.build:3002/user/login?action=login&token=${req.token}`)
         }
 
         else {
