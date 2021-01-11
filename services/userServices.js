@@ -318,8 +318,8 @@ const editUser = async (req, res) => {
                             updateUser[e] = req.body[e]
                         }
                     })
+                    console.log(updateUser);
                     const {id, createdAt, updatedAt, password, ...others} = updateUser.dataValues;
-                    console.log(others);
                     const editUser = await User.update(others, {
                         where: {
                             id: req.user.id
