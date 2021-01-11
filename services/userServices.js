@@ -304,6 +304,7 @@ const editUser = async (req, res) => {
         }
         else {
             if ((req.role == "user" || "admin") && (!req.params.id)) {
+                console.log("hello");
                 const updates = Object.keys(req.body)
                 const allowedUpdates = ['firstname', 'lastname', 'email']
                 const validation = updates.every(e => { return allowedUpdates.includes(e) })
