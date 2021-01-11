@@ -67,6 +67,7 @@ const createPassword = async (req, res) => {
                 },
                 individualHooks: true
             })
+            res.setHeader('Content-Type', 'application/json')
             res.redirect(`http://user-dashboard.qburst.build:3002/user/login?action=login&token=${req.token}`)
         }
 
