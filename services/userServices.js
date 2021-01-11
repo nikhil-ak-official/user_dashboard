@@ -67,7 +67,8 @@ const createPassword = async (req, res) => {
                 },
                 individualHooks: true
             })
-            res.redirect(`/user/login?action=login&token=${req.token}`)
+            res.status(200).send(addPassword)
+            // res.redirect(`/user/login?action=login&token=${req.token}`)
         }
 
         else {
