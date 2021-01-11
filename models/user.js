@@ -49,7 +49,9 @@ const User = mysqlConnection.define('Users', {
             len: [6,]
         },
         set(val) {
-            this.setDataValue('password', bcrypt.hashSync(val, 8)) 
+            if(val!=null) {
+                this.setDataValue('password', bcrypt.hashSync(val, 8)) 
+            }
         }
     },
     token: {
