@@ -15,7 +15,8 @@ const authenticateToken = async (req, res, next) => {
                 token = req.query.token
                 decode = jwt.verify(token, process.env.RESET_TOKEN_SECRET_KEY)
             }
-            else {;
+            else {
+                console.log("in auth");
                 token = req.headers['authorization'].split(' ')[1]
                 decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY)
             }
@@ -35,6 +36,7 @@ const authenticateToken = async (req, res, next) => {
                 req.role = currentUserRole.dataValues.name
                 req.user = currentUser.dataValues
                 req.token = token
+                console.log(req.user);
                 next()
             }
             else {
