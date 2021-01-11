@@ -67,7 +67,6 @@ const createPassword = async (req, res) => {
                 },
                 individualHooks: true
             })
-            res.setHeader('Content-Type', 'application/json')
             res.redirect(`http://user-dashboard.qburst.build:3002/user/login?action=login&token=${req.token}`)
         }
 
@@ -82,7 +81,6 @@ const createPassword = async (req, res) => {
                 individualHooks: true
             })
             res.status(200).send({"success": 200, "message": "user sets password", "data" : addPassword[1][0].dataValues})
-            // res.redirect(`/user/login`)
         }
 
     }
@@ -185,6 +183,7 @@ const loginUserWithToken = async (req, res) => {
         })
         const role = req.role
         const loggedUser = changeStatus[1][0].dataValues
+        res.setHeader('Content-Type', 'application/json')
         res.status(200).send({"success": 200, "message": "user logged in successfully with token", "data":{loggedUser, role}})
     }
     catch (err) {
