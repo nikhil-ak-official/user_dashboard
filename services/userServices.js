@@ -50,8 +50,8 @@ const getUsersList = async (req, res) => {
 
     }
     catch (err) {
-        log.error('Error accessing getUsersList', {"error": err})
-        res.status(400).send(err)
+        log.error('Error accessing getUsersList', {"error": err.error[0].message})
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 
 }
@@ -68,8 +68,8 @@ const createUser = async (req, res) => {
         res.status(201).send({"success": 201, "message": "admin creates users", "data" : {newUser, role}})
     }
     catch (err) {
-        log.error('Error accessing createUser', {"error": err})
-        res.status(400).send(err)
+        log.error('Error accessing createUser', {"error": err.error[0].message})
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 
 }
@@ -108,8 +108,8 @@ const createPassword = async (req, res) => {
 
     }
     catch (err) {
-        log.error('Error accessing createPassword', {"error": err})
-        res.status(400).send(err)
+        log.error('Error accessing createPassword', {"error": err.error[0].message})
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 }
 
@@ -140,9 +140,9 @@ const checkUser = async (req, res) => {
         }
     }
     catch (err) {
-        log.error('Error accessing checkUser', {"error": err || 'email doesnt exist'})
+        log.error('Error accessing checkUser', {"error": err.error[0].message || 'email doesnt exist'})
 
-        res.status(400).send({"error": 400, "message": err || "email doesnt exist"})
+        res.status(400).send({"error": 400, "message": {"error": 400, "message": err.error[0].message} || "email doesnt exist"})
     }
 }
 
@@ -201,9 +201,9 @@ const loginUser = async (req, res) => {
 
     }
     catch (err) {
-        log.error('Error accessing loginUser', {"error": err })
+        log.error('Error accessing loginUser', {"error": err.error[0].message })
 
-        res.status(400).send(err)
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 }
 
@@ -235,9 +235,9 @@ const loginUserWithToken = async (req, res) => {
         res.status(200).send({"success": 200, "message": "user logged in successfully with token", "data":{loggedUser, role}})
     }
     catch (err) {
-        log.error('Error accessing loginUserWithToken', {"error": err })
+        log.error('Error accessing loginUserWithToken', {"error": err.error[0].message })
 
-        res.status(400).send(err)
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 }
 
@@ -273,9 +273,9 @@ const forgotPassword = async (req, res) => {
         }
     }
     catch (err) {
-        log.error('Error accessing forgotPassword', {"error": err })
+        log.error('Error accessing forgotPassword', {"error": err.error[0].message })
 
-        res.status(400).send(err)
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 
 }
@@ -314,9 +314,9 @@ const changePassword = async (req, res) => {
         }
     }
     catch (err) {
-        log.error('Error accessing changePassword', {"error": err })
+        log.error('Error accessing changePassword', {"error": err.error[0].message })
 
-        res.status(400).send(err)
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 }
 
@@ -330,7 +330,6 @@ const editUser = async (req, res) => {
 
                 return res.status(400).send({"error": 400, "message": "cannot edit admin details"})
             }
-            else {
                 let updates;
             if (req.body.role) {
                 updates = Object.keys(req.body)
@@ -373,7 +372,6 @@ const editUser = async (req, res) => {
 
                 res.status(200).send({"success": 200, "message": "admin successfully edited user details", "data":{editedUser, role}})
             }
-            }
             
         }
         else {
@@ -414,9 +412,9 @@ const editUser = async (req, res) => {
 
     }
     catch (err) {
-        log.error('Error accessing editUser', {"error": err })
+        log.error('Error accessing editUser', {"error": err.error[0].message })
 
-        res.status(400).send(err)
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 }
 
@@ -437,9 +435,9 @@ const logoutUser = async (req, res) => {
         res.status(200).send({"success": 200, "message":"user logged out successfully"})
     }
     catch (err) {
-        log.error('Error accessing logoutUser', {"error": err })
+        log.error('Error accessing logoutUser', {"error": err.error[0].message })
 
-        res.status(400).send(err)
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 }
 
@@ -482,9 +480,9 @@ const deleteUser = async(req,res) => {
  
     }
     catch(err) {
-        log.error('Error accessing deleteUser', {"error": err })
+        log.error('Error accessing deleteUser', {"error": err.error[0].message })
 
-        res.status(400).send(err)
+        res.status(400).send({"error": 400, "message": err.error[0].message})
     }
 }
 module.exports = {
