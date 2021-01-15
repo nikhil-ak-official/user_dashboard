@@ -8,6 +8,7 @@ const authorized = require('../middleware/admin')
 const log = require('../logs/logger')
 const Product = require('../models/product')
 const getCategoryId = require('../middleware/getCategoryId')
+var multer = require('multer')
 
 
 const router = express.Router()
