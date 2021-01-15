@@ -9,7 +9,14 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        validate: {
+          isAlpha: true
+        },
+      set(value) {
+        this.setDataValue('name',value.trim().toLowerCase())
+      }
       },
       createdAt: {
         allowNull: false,

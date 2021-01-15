@@ -9,13 +9,31 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       product_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+            references: {
+              model: 'Products',
+              key: 'id'
+            },
+    
       },
       cart_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+            references: {
+              model: 'Carts',
+              key: 'id'
+            },
       },
       product_quantity: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        validate: {
+          validator(value) {
+            if(value<0) {
+              throw new Error('Please enter a positive value')
+            }
+          }
+        }
       },
       createdAt: {
         allowNull: false,

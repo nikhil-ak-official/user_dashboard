@@ -12,10 +12,21 @@ const ProductsCart = mysqlConnection.define('ProductsCarts', {
     type: Sequelize.INTEGER
   },
   product_id: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    onDelete: 'CASCADE',
+        references: {
+          model: 'Products',
+          key: 'id'
+        },
+
   },
   cart_id: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    onDelete: 'CASCADE',
+        references: {
+          model: 'Carts',
+          key: 'id'
+        },
   },
   product_quantity: {
     type: Sequelize.INTEGER,
@@ -37,7 +48,14 @@ const ProductsCart = mysqlConnection.define('ProductsCarts', {
   }
 })
 
-Product.belongsToMany(Cart, {through: 'ProductsCarts'});
-Cart.belongsToMany(Product, {through: 'ProductsCarts'});
+Product.belongsToMany(Cart, {through: 'ProductsCarts', foreignKey: 'product_id'});
+Cart.belongsToMany(Product, {through: 'ProductsCarts', foreignKey: 'cart_id'});
+
+Product.hasMany(ProductsCart, {foreignKey: 'product_id'});
+ProductsCart.belongsTo(Product, {foreignKey: 'product_id'});
+
+Cart.hasMany(ProductsCart, {foreignKey: 'cart_id'});
+ProductsCart.belongsTo(Cart, {foreignKey: 'cart_id'});
+
 
 module.exports = ProductsCart

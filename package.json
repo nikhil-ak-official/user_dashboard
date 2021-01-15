@@ -1,5 +1,5 @@
 {
-  "name": "user_dashboard_backend",
+  "name": "user_dashboard",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -21,11 +21,11 @@
     "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mysql2": "^2.2.5",
-    "sequelize": "^6.3.5"
+    "mysql2": "^2.2.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.6",
+    "sequelize": "^6.3.5",
     "sequelize-cli": "^6.2.0"
   }
 }

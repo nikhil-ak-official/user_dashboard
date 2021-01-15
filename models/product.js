@@ -13,6 +13,7 @@ const Product = mysqlConnection.define('Products', {
   },
   name: {
     type: Sequelize.STRING,
+    unique:true,
     allowNull: false
   },
   description: {
@@ -35,16 +36,40 @@ const Product = mysqlConnection.define('Products', {
   status: {
     type: Sequelize.STRING,
     validate: {
-      notIn: [['active', 'inactive']]
+      isIn: [['active', 'inactive']]
+    }
+  },
+  quantity: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    validate: {
+      validator(value) {
+        if(value<=0) {
+          throw new Error('Please enter a value greater than zero')
+        }
+      }
     }
   },
   category_id: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
+    onDelete: 'CASCADE',
+        references: {
+          model: 'Categories',
+          key: 'id'
+        },
+
+
   },
   subcategory_id: {
     type: Sequelize.INTEGER,
-    allowNull: true
+    allowNull: true,
+    onDelete: 'CASCADE',
+        references: {
+          model: 'Subcategories',
+          key: 'id'
+        },
+
   },
   createdAt: {
     allowNull: false,
@@ -57,10 +82,10 @@ const Product = mysqlConnection.define('Products', {
 }
 )
 
-Category.hasMany(Product);
-Product.belongsTo(Category);
+Category.hasMany(Product, {foreignKey: 'category_id'});
+Product.belongsTo(Category, {foreignKey: 'category_id'});
 
-Subcategory.hasMany(Product);
-Product.belongsTo(Subcategory);
+Subcategory.hasMany(Product, {foreignKey: 'subcategory_id'});
+Product.belongsTo(Subcategory, {foreignKey: 'subcategory_id'});
 
 module.exports = Product

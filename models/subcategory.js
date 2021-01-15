@@ -14,11 +14,19 @@ const Subcategory = mysqlConnection.define('Subcategories', {
       unique: true,
       validate: {
           isAlpha: true
+      },
+      set(value) {
+        this.setDataValue('name',value.trim().toLowerCase())
       }
     },
     category_id: {
-      type: Sequelize.STRING,
-      allowNull: false
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      onDelete: 'CASCADE',
+        references: {
+          model: 'Categories',
+          key: 'id'
+        },
     },
     createdAt: {
       allowNull: false,
@@ -32,7 +40,7 @@ const Subcategory = mysqlConnection.define('Subcategories', {
 
   // associations
 
-  Category.hasMany(Subcategory);
-  Subcategory.belongsTo(Category);
+  Category.hasMany(Subcategory, {foreignKey: 'category_id'});
+  Subcategory.belongsTo(Category, {foreignKey: 'category_id'});
 
   module.exports = Subcategory

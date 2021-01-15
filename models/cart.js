@@ -10,7 +10,12 @@ const Cart = mysqlConnection.define('Carts', {
     type: Sequelize.INTEGER
   },
   user_id: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    onDelete: 'CASCADE',
+    references: {
+      model: 'Users',
+      key: 'id'
+    },
   },
   createdAt: {
     allowNull: false,
@@ -22,7 +27,7 @@ const Cart = mysqlConnection.define('Carts', {
   }
 })
 
-User.hasOne(Cart);
-Cart.hasMany(User);
+User.hasOne(Cart, {foreignKey: 'user_id'});
+Cart.belongsTo(User, {foreignKey: 'user_id'})
 
 module.exports = Cart

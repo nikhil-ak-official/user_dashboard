@@ -13,6 +13,9 @@ const Category = mysqlConnection.define('Categories', {
     unique: true,
     validate: {
       isAlpha: true
+    },
+  set(value) {
+    this.setDataValue('name',value.trim().toLowerCase())
   }
   },
   createdAt: {
