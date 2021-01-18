@@ -1,10 +1,8 @@
 const express = require('express')
-
 const Category = require('..//models/category')
 const Subcategory = require('../models/subcategory')
 const log = require('../logs/logger')
 const Product = require('../models/product')
-
 
 
 const createProduct = async (req,res) => {
@@ -44,32 +42,59 @@ const createProduct = async (req,res) => {
 const editProduct = async (req,res) => {
     try {
         log.info('Incoming request to editProduct', {"request": req.body})
+        const updateKeys = Object.keys(req.body) 
+        const product = await Product.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
         if(req.body.subcategory) {
-            const {category, subcategory, ...others} = req.body
-            const updateProduct = await Product.update({category_id: req.categoryId,subcategory_id: req.subcategoryId, image: req.file.path,...others}, {
-                where: {
-                    id: req.params.id
-                },
-                individualHooks: true
-            })
- 
-            log.info('Outgoin response from editProduct where subcategory exist', {"respone": updateProduct[1][0].dataValues})
-
-            res.status(200).send({"success": 200, "message": "Product edited successfully by admin", "data": updateProduct[1][0].dataValues})
+            const index = updateKeys.findIndex(e => e === 'subcategory')
+            updateKeys.splice(index, 1, 'subcategory_id')
+            req.body['subcategory_id'] = req.subcategoryId
         }
-        else {
-            const {category, ...others} = req.body
-        const updateProduct = await Product.update({category_id: req.categoryId, image: req.file.path, ...others}, {
+        if(req.body.category) {
+            const index = updateKeys.findIndex(e => e === 'category')
+            updateKeys.splice(index, 1, 'category_id')
+            req.body['category_id'] = req.categoryId
+        }
+        updateKeys.forEach(e => {
+            if (req.body[e]) {
+                if(e == "price" || e =="quantity") {
+                    product[e] = parseInt(req.body[e])
+                }
+                else {
+                product[e] = req.body[e]
+
+                }            
+            }
+        })
+
+        if(req.file) {
+            const {id, createdAt, updatedAt, image,...others} = product.dataValues;
+        const updatedProduct = await Product.update({image: req.file.path, ...others}, {
             where: {
                 id: req.params.id
             },
             individualHooks: true
         })
-        log.info('Outgoin response from editProduct', {"respone": updateProduct[1][0].dataValues})
+        log.info('Outgoin response from editProduct where subcategory exist', {"respone": updatedProduct[1][0].dataValues})
 
-        res.status(200).send({"success": 200, "message": "Product edited successfully by admin", "data": updateProduct[1][0].dataValues})
+        res.status(200).send({"success": 200, "message": "Product edited successfully by admin", "data": updatedProduct[1][0].dataValues})
         }
-        
+        else {
+            const {id, createdAt, updatedAt, ...others} = product.dataValues;
+            console.log(others);
+            const updatedProduct = await Product.update(others, {
+                where: {
+                    id: req.params.id
+                },
+                individualHooks: true
+            })
+        console.log(updatedProduct);
+        log.info('Outgoin response from editProduct where subcategory exist', {"respone": updatedProduct[1][0].dataValues})
+        res.status(200).send({"success": 200, "message": "Product edited successfully by admin", "data": updatedProduct[1][0].dataValues})
+        }        
     }
     catch(err) {
         log.error('Error accesssing editProduct', {"error": 'id doesnt exist'})
@@ -79,10 +104,9 @@ const editProduct = async (req,res) => {
         else{
             res.status(400).send({"error": 400, "message": 'id doesnt exist' })
 
-        }
+            }
 
     }
-
 }
 
 const removeProduct = async(req,res) => {
@@ -115,7 +139,10 @@ const getProducts = async(req,res) => {
                 where: {
                     category_id: req.categoryId,
                 },
-                limit: parseInt(req.query.range) || null
+                limit: parseInt(req.query.range) || null,
+                offset: parseInt(req.query.range) * req.query.page || null,
+                order: [`${req.query.property}` || null, `${req.query.sort}` || null]
+
 
             })
             log.info('Outgoin response from getProducts', {"respone": productsUnderCategories})
@@ -127,7 +154,10 @@ const getProducts = async(req,res) => {
                 where: {
                     subcategory_id: req.subcategoryId
                 },
-                limit: parseInt(req.query.range) || null
+                limit: parseInt(req.query.range) || null,
+                offset: parseInt(req.query.range) * req.query.page || null,
+
+                order: [`${req.query.property}` || null, `${req.query.sort}` || null]
             })
             log.info('Outgoin response from getProducts', {"respone": productsUnderSubcategories})
     
@@ -135,7 +165,9 @@ const getProducts = async(req,res) => {
         }
         else {
             const allProducts = await Product.findAll({
-                limit: parseInt(req.query.range) || null
+                limit: parseInt(req.query.range) || null,
+                offset: parseInt(req.query.range) * req.query.page || null,
+                order: [`${req.query.property}` || null, `${req.query.sort}` || null]
 
             })
             log.info('Outgoin response from getProducts', {"respone": allProducts})

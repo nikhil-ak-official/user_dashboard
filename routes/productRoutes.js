@@ -22,10 +22,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage,
 fileFilter(req, file, cb){
-        if(!file) {
-            return cb('Please select a file to upload', null)
-
-    }
     const ext = file.mimetype.split('/')[1]
     if(ext == "jpeg"|| ext == "png" || ext == "jpg") {
         return cb(null,true)
@@ -62,7 +58,21 @@ router.post('/create', authenticateToken, authorized(['admin']), function(req,re
     getCategoryId, createProduct)
 
 // edit product by admin
-router.put('/:id', authenticateToken, authorized(['admin']), getCategoryId ,editProduct)
+router.patch('/:id', authenticateToken, authorized(['admin']), function(req,res,next) {
+    
+    upload(req, res, function(err) {
+        if(err instanceof multer.MulterError) {
+            res.status(400).send({"error":400, "message":err.message})
+        }
+        else if(err) {
+            res.status(400).send({"error":400, "message":err})
+
+        }
+        else {
+            next()
+        }
+    }
+    )}, getCategoryId ,editProduct)
 
 // delete product
 router.delete('/:id', authenticateToken, authorized(['admin']), removeProduct)

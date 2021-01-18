@@ -1,6 +1,8 @@
 const express = require('express')
 const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
+const getCategoryId = require('../middleware/getCategoryId')
+
 const {createSubcategory,editSubcategory,deleteSubcategory,listOfSubs}= require('../services/SubcategoryServices')
 
 const router = express.Router()
