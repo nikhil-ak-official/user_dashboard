@@ -8,27 +8,77 @@ const authorized = require('../middleware/admin')
 const log = require('../logs/logger')
 const Product = require('../models/product')
 const getCategoryId = require('../middleware/getCategoryId')
-var multer = require('multer')
 
+const multer = require('multer')
+const path = require('path')
+const sharp = require('sharp')
 
 const router = express.Router()
 
+const storage = multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null, './images')
+    },
+    
+    filename: function(req,file,cb){
+        cb(null, Date.now()+file.originalname)
+    }
+})
+
+const upload = multer({storage: storage,
+fileFilter(req, file, cb){
+        if(!file) {
+            return cb('Please select a file to upload', null)
+
+    }
+    const ext = file.mimetype.split('/')[1]
+    if(ext == "jpeg"|| ext == "png" || ext == "jpg") {
+        return cb(null,true)
+    }
+    cb('Please upload an image file', null)
+    
+},
+limits: {
+    fileSize: 1000000000000
+}
+}).single('avatar')
+
 // create product by admin
-router.post('/create', authenticateToken, authorized(['admin']), getCategoryId ,async (req,res) => {
+router.post('/create', authenticateToken, authorized(['admin']), function(req,res,next) {
+    
+    upload(req, res, function(err) {
+        if(!req.file) {
+            res.status(400).send({"error":400, "message":'Please select a file to upload'})
+            
+        }
+        if(err instanceof multer.MulterError) {
+            res.status(400).send({"error":400, "message":err.message})
+        }
+        else if(err) {
+            res.status(400).send({"error":400, "message":err})
+
+        }
+        else {
+            next()
+        }
+    }
+    )},
+    getCategoryId ,async (req,res) => {
     try {
         log.info('Incoming request to createProduct', {"request": req.body})
+        console.log(req.body);
         if(req.body.subcategory) {
             const {category, subcategory, ...others} = req.body
             log.debug('get category id', req.categoryId)
             log.debug('get category id', req.subcategoryId)
-            const newProduct = await Product.create({...others, category_id: req.categoryId, subcategory_id: req.subcategoryId})
+            const newProduct = await Product.create({...others, image: req.file.path, category_id: req.categoryId, subcategory_id: req.subcategoryId})
             log.info('Outgoin response from createProduct', {"respone": newProduct.dataValues})
             res.status(201).send({"success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues})
         }
         else {
             const {category, subcategory, ...others} = req.body
             log.debug('get category id', req.categoryId)
-            const newProduct = await Product.create({...others, category_id: req.categoryId})
+            const newProduct = await Product.create({...others, image: req.file.path,category_id: req.categoryId})
             log.info('Outgoin response from createProduct', {"respone": newProduct.dataValues})
             res.status(201).send({"success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues})
         }
@@ -53,7 +103,7 @@ router.put('/:id', authenticateToken, authorized(['admin']), getCategoryId ,asyn
         log.info('Incoming request to editProduct', {"request": req.body})
         if(req.body.subcategory) {
             const {category, subcategory, ...others} = req.body
-            const updateProduct = await Product.update({category_id: req.categoryId,subcategory_id: req.subcategoryId, ...others}, {
+            const updateProduct = await Product.update({category_id: req.categoryId,subcategory_id: req.subcategoryId, image: req.file.path,...others}, {
                 where: {
                     id: req.params.id
                 },
@@ -66,7 +116,7 @@ router.put('/:id', authenticateToken, authorized(['admin']), getCategoryId ,asyn
         }
         else {
             const {category, ...others} = req.body
-        const updateProduct = await Product.update({category_id: req.categoryId, ...others}, {
+        const updateProduct = await Product.update({category_id: req.categoryId, image: req.file.path, ...others}, {
             where: {
                 id: req.params.id
             },
@@ -160,6 +210,35 @@ router.get('/', authenticateToken, authorized(['admin', 'user']), getCategoryId,
     
     
 })
+
+// router.post('/image/:id', function(req,res,next) {
+    
+//     upload(req, res, function(err) {
+//         if(!req.file) {
+//             res.status(400).send({"error":400, "message":'Please select a file to upload'})
+            
+//         }
+//         if(err instanceof multer.MulterError) {
+//             res.status(400).send({"error":400, "message":err.message})
+//         }
+//         else if(err) {
+//             res.status(400).send({"error":400, "message":err})
+
+//         }
+//         else {
+//             next()
+//         }
+//     }
+//     )}, async(req,res) => {
+//         const image = await Product.update({
+//             image: req.file.path
+//         }, {
+//             where: {
+//                 id: req.params.id
+//             }
+//         })
+//         res.status(201).send(req.file)
+// })
 
 
 module.exports = router

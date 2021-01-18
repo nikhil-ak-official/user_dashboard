@@ -15,11 +15,6 @@ const getUsersList = async (req, res) => {
         if (role == "admin") {
             log.info('Incoming request to getUsersList by admin')
             const usersList = await User.findAll({
-                where: {
-                    id: {
-                        [Op.ne]: req.user.id
-                    }
-                },
                 attributes: {
                     exclude: ['password', 'token', 'role_id', 'resetPasswordToken']
                 },
@@ -36,9 +31,6 @@ const getUsersList = async (req, res) => {
                 log.info('Incoming request to getUsersList by user')
                 const userList = await User.findAll({
                     where: {
-                        id: {
-                            [Op.ne]: req.user.id
-                        },
                         role_id: req.user.role_id
                     },
                     attributes: ['firstname', 'lastname', 'email', 'status']
