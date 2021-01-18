@@ -8,6 +8,7 @@ const authorized = require('../middleware/admin')
 const log = require('../logs/logger')
 const Product = require('../models/product')
 const getCategoryId = require('../middleware/getCategoryId')
+
 const multer = require('multer')
 const path = require('path')
 const sharp = require('sharp')
