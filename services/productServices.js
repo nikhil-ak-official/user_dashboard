@@ -3,6 +3,7 @@ const Category = require('..//models/category')
 const Subcategory = require('../models/subcategory')
 const log = require('../logs/logger')
 const Product = require('../models/product')
+const fs = require('fs')
 
 
 const createProduct = async (req,res) => {
@@ -72,6 +73,8 @@ const editProduct = async (req,res) => {
 
         if(req.file) {
             const {id, createdAt, updatedAt, image,...others} = product.dataValues;
+            console.log(image);
+            fs.unlinkSync('./public_html/user_dashboard/'+ image)
         const updatedProduct = await Product.update({image: req.file.path, ...others}, {
             where: {
                 id: req.params.id
@@ -112,6 +115,11 @@ const editProduct = async (req,res) => {
 const removeProduct = async(req,res) => {
     try {
         log.info('Incoming request to deleteProduct')
+        const product = await Product.findOne({
+            where: {
+                id:req.params.id
+            }
+        })
         const removeProduct = await Product.destroy({
             where: {
                 id: req.params.id
@@ -119,6 +127,10 @@ const removeProduct = async(req,res) => {
         })
         if(removeProduct == 0) {
             return res.status(400).send({"error": 400, "message": 'id doesnt exist' })
+        }
+        if(product.image!=null) {
+            fs.unlinkSync('./public_html/user_dashboard/'+ product.image)
+
         }
         log.info('Outgoin response from deleteProduct', {"respone": "Product deleted successfully by admin"})
 

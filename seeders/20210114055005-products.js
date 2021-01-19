@@ -17,6 +17,7 @@ module.exports = {
      price: 299,
      status: 'active',
      quantity: 10,
+     image: 'images/2021-01-18.jpg',
      category_id: 1,
      subcategory_id: 1,
      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),

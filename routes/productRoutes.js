@@ -12,7 +12,7 @@ const sharp = require('sharp')
 
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null, './user_dashboard/images')
+        cb(null, './public_html/user_dashboard/images')
     },
     
     filename: function(req,file,cb){
