@@ -26,7 +26,7 @@ const getCategoryId = async(req,res,next) => {
     }
     catch(err) {
         log.error('Error response from getCategoryId', {"error": "unauthorized role"})
-        res.status(404).send("category or subcategory doesnt exist")
+        res.status(404).send({"error":404, "message":"category or subcategory doesnt exist"})
     }
    
     

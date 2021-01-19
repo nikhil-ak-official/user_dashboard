@@ -49,7 +49,7 @@ const authenticateToken = async (req, res, next) => {
             else {
                 log.error('Error response from auth', {"error": "expired token"})
 
-                res.status(401).send("expired token")
+                res.status(401).send({"error": 401, "message" :"expired token"})
             }
 
         }
@@ -58,7 +58,7 @@ const authenticateToken = async (req, res, next) => {
     catch (err) {
         log.error('Error accessing auth', {"error": err})
 
-        res.status(401).send(err.message)
+        res.status(401).send({"error": 401, "message" :err.message})
     }
 
 }

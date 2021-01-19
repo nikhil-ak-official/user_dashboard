@@ -7,7 +7,7 @@ const authorized = (roles) => {
         if (req.user.status == "inactive") {
             log.info('Incoming request to authorized by inactive')
 
-            res.status(403).send("user inactive")
+            res.status(403).send({"error": 403, "message": "user inactive"})
         }
         else {
             if (req.query.action == "setPassword" || req.url == "/password") {
@@ -25,7 +25,7 @@ const authorized = (roles) => {
             else {
                 log.error('Error response from authorized', {"error": "unauthorized role"})
 
-                res.status(403).send("unauthorized role")
+                res.status(403).send({"error": 403, "message": "unauthorized role"})
             }
         }
 

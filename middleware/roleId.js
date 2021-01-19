@@ -53,7 +53,7 @@ const getRoleId = async (req, res, next) => {
     catch (err) {
         log.error('Error accessing getRoleId ', {"response": "user with that id doesnt exist or user with role doesnt exist"})
 
-        res.status(400).send("user with that id doesnt exist or user with role doesnt exist")
+        res.status(400).send({"error": 403, "message": "user with that id doesnt exist or user with role doesnt exist"})
     }
 }
 
