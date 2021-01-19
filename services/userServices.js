@@ -152,7 +152,6 @@ const checkUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        console.log("in login");
         log.info('Incoming request to loginUser', {"request": req.body})
 
             const existUser = await User.findOne({
@@ -164,7 +163,6 @@ const loginUser = async (req, res) => {
                     attributes: ['name']
                 }
             })
-            console.log(existUser);
 
             if(existUser) {
                 if (await bcrypt.compare(req.body.password, existUser.password)) {
@@ -174,7 +172,6 @@ const loginUser = async (req, res) => {
                         res.send(403).send({"error": 403, "message": "user inactive"})
                     }
                     else {
-                        console.log("in else");
                         const token = await existUser.generateToken()
                         const changeStatus = await User.update({
                             status: "active",
