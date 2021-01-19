@@ -164,6 +164,8 @@ const loginUser = async (req, res) => {
                     attributes: ['name']
                 }
             })
+            console.log(existUser);
+
             if(existUser) {
                 if (await bcrypt.compare(req.body.password, existUser.password)) {
                     if(existUser.status == "inactive") {
@@ -172,8 +174,8 @@ const loginUser = async (req, res) => {
                         res.send(403).send({"error": 403, "message": "user inactive"})
                     }
                     else {
+                        console.log("in else");
                         const token = await existUser.generateToken()
-                        console.log("after existUser");
                         const changeStatus = await User.update({
                             status: "active",
                             token: token,
