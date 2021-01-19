@@ -164,8 +164,6 @@ const loginUser = async (req, res) => {
                     attributes: ['name']
                 }
             })
-        console.log("after existUser");
-
             if(existUser) {
                 if (await bcrypt.compare(req.body.password, existUser.password)) {
                     if(existUser.status == "inactive") {
@@ -185,6 +183,8 @@ const loginUser = async (req, res) => {
                             },
                             individualHooks: true
                         })
+        console.log("after existUser");
+
                         const role = existUser.Role.name
                         const loggedUser = changeStatus[1][0].dataValues
                         log.info('Outgoin response from loginUser', {"response":  {loggedUser,role}})
