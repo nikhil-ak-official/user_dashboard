@@ -153,7 +153,7 @@ const checkUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         console.log("in login");
-        log.info('Incoming request to loginUser', {"request": req.body})
+        // log.info('Incoming request to loginUser', {"request": req.body})
 
             const existUser = await User.findOne({
                 where: {
@@ -188,7 +188,7 @@ const loginUser = async (req, res) => {
                         })
                         const role = existUser.Role.name
                         const loggedUser = changeStatus[1][0].dataValues
-                        log.info('Outgoin response from loginUser', {"response":  {loggedUser,role}})
+                        // log.info('Outgoin response from loginUser', {"response":  {loggedUser,role}})
 
                         res.status(200).send({"success": 200, "message": "user logged in successfully", "data":{loggedUser, role}})
                     }
