@@ -152,6 +152,7 @@ const checkUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
+        console.log("in login");
         log.info('Incoming request to loginUser', {"request": req.body})
 
             const existUser = await User.findOne({
@@ -163,6 +164,8 @@ const loginUser = async (req, res) => {
                     attributes: ['name']
                 }
             })
+        console.log("after existUser");
+
             if(existUser) {
                 if (await bcrypt.compare(req.body.password, existUser.password)) {
                     if(existUser.status == "inactive") {
