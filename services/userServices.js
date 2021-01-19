@@ -173,6 +173,7 @@ const loginUser = async (req, res) => {
                     }
                     else {
                         const token = await existUser.generateToken()
+                        console.log("after existUser");
                         const changeStatus = await User.update({
                             status: "active",
                             token: token,
@@ -183,8 +184,6 @@ const loginUser = async (req, res) => {
                             },
                             individualHooks: true
                         })
-        console.log("after existUser");
-
                         const role = existUser.Role.name
                         const loggedUser = changeStatus[1][0].dataValues
                         log.info('Outgoin response from loginUser', {"response":  {loggedUser,role}})
