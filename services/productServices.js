@@ -141,7 +141,7 @@ const getProducts = async(req,res) => {
                 },
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
-                order: [`${req.query.property}` || null, `${req.query.sort}` || null]
+                order: req.query.property? [`${req.query.property}`, `${req.query.sort}`]
 
 
             })
@@ -157,7 +157,8 @@ const getProducts = async(req,res) => {
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
 
-                order: [`${req.query.property}` || null, `${req.query.sort}` || null]
+                order: req.query.property? [`${req.query.property}`, `${req.query.sort}`]
+
             })
             log.info('Outgoin response from getProducts', {"respone": productsUnderSubcategories})
     
@@ -167,7 +168,8 @@ const getProducts = async(req,res) => {
             const allProducts = await Product.findAll({
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
-                order: [`${req.query.property}` || null, `${req.query.sort}` || null]
+                order: req.query.property? [`${req.query.property}`, `${req.query.sort}`]
+
 
             })
             log.info('Outgoin response from getProducts', {"respone": allProducts})
