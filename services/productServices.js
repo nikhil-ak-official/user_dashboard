@@ -74,7 +74,7 @@ const editProduct = async (req,res) => {
         if(req.file) {
             const {id, createdAt, updatedAt, image,...others} = product.dataValues;
             console.log(image);
-            fs.unlinkSync('./user_dashboard/'+ image)
+            fs.unlinkSync(image)
         const updatedProduct = await Product.update({image: req.file.path, ...others}, {
             where: {
                 id: req.params.id
@@ -129,7 +129,7 @@ const removeProduct = async(req,res) => {
             return res.status(400).send({"error": 400, "message": 'id doesnt exist' })
         }
         if(product.image!=null) {
-            fs.unlinkSync('./user_dashboard/'+ product.image)
+            fs.unlinkSync(product.image)
 
         }
         log.info('Outgoin response from deleteProduct', {"respone": "Product deleted successfully by admin"})
