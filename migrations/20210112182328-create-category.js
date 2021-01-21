@@ -12,7 +12,12 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
         validate: {
-          isAlpha: true
+          validator(value) {
+            const alpha = /^[a-zA-Z ]*$/;
+            if(!value.match(alpha)) {
+              throw new Error('Please enter valid category name')
+            }
+          }
         },
       set(value) {
         this.setDataValue('name',value.trim().toLowerCase())

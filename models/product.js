@@ -14,7 +14,16 @@ const Product = mysqlConnection.define('Products', {
   name: {
     type: Sequelize.STRING,
     unique:true,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      validator(value) {
+        const alpha = /^[a-zA-Z ]*$/;
+        if(!value.match(alpha)) {
+          throw new Error('Please enter valid product name')
+        }
+      }
+    }
+
   },
   description: {
     type: Sequelize.STRING
