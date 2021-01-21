@@ -19,7 +19,7 @@ const createProduct = async (req,res) => {
             res.status(201).send({"success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues})
         }
         else {
-            const {category, subcategory, ...others} = req.body
+            const {category, ...others} = req.body
             log.debug('get category id', req.categoryId)
             const newProduct = await Product.create({...others, image: req.file.path,category_id: req.categoryId})
             log.info('Outgoin response from createProduct', {"respone": newProduct.dataValues})
