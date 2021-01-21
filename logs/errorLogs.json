@@ -1,2 +1,0 @@
-{"name":"userLogger","hostname":"LAPTOP-QV5SU20B","pid":9404,"level":50,"msg":"Error response from auth { error: 'expired token' }","time":"2021-01-21T06:46:10.630Z","v":0}
-{"name":"userLogger","hostname":"LAPTOP-QV5SU20B","pid":9404,"level":50,"msg":"Error accesssing createCategory { error: 'Validation error' }","time":"2021-01-21T06:47:43.232Z","v":0}
