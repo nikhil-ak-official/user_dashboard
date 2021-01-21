@@ -43,7 +43,7 @@ const Subcategory = mysqlConnection.define('Subcategories', {
 Subcategory.beforeCreate(async (subcategory,options)=>{
   const checkName = await Subcategory.findAll()
   checkName.forEach(e => {
-    if(e.replace('/\s+/g','').trim().toLowercase() == subcategory.name.replace('/\s+/g','').trim().toLowercase()) {
+    if(e.name.replace('/\s+/g','').trim().toLowercase() == subcategory.name.replace('/\s+/g','').trim().toLowercase()) {
       throw new Error('subcategory name already exist')
     }
   })
@@ -52,7 +52,7 @@ Subcategory.beforeCreate(async (subcategory,options)=>{
 Subcategory.beforeUpdate(async (subcategory,options)=>{
   const checkName = await Subcategory.findAll()
   checkName.forEach(e => {
-    if(e.replace('/\s+/g','').trim().toLowercase() == subcategory.name.replace('/\s+/g','').trim().toLowercase()) {
+    if(e.name.replace('/\s+/g','').trim().toLowercase() == subcategory.name.replace('/\s+/g','').trim().toLowercase()) {
       throw new Error('subcategory name already exist')
     }
   })

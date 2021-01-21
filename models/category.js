@@ -33,7 +33,7 @@ const Category = mysqlConnection.define('Categories', {
 Category.beforeCreate(async (category,options)=>{
   const checkName = await Category.findAll()
   checkName.forEach(e => {
-    if(e.replace('/\s+/g','').trim().toLowercase() == category.name.replace('/\s+/g','').trim().toLowercase()) {
+    if(e.name.replace('/\s+/g','').trim().toLowercase() == category.name.replace('/\s+/g','').trim().toLowercase()) {
       throw new Error('category name already exist')
     }
   })
@@ -43,7 +43,7 @@ Category.beforeCreate(async (category,options)=>{
 Category.beforeUpdate(async (category,options)=>{
   const checkName = await Category.findAll()
   checkName.forEach(e => {
-    if(e.replace('/\s+/g','').trim().toLowercase() == category.name.replace('/\s+/g','').trim().toLowercase()) {
+    if(e.name.replace('/\s+/g','').trim().toLowercase() == category.name.replace('/\s+/g','').trim().toLowercase()) {
       throw new Error('category name already exist')
     }
   })
