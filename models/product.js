@@ -94,7 +94,8 @@ const Product = mysqlConnection.define('Products', {
 Product.beforeCreate(async (product,options)=>{
   const checkName = await Product.findAll()
   checkName.forEach(e => {
-    if(e.name.replace('/\s+/g','').trim().toLowercase() == product.name.replace('/\s+/g','').trim().toLowercase()) {
+    let name = e.dataValues.name
+    if(name.replace('/\s+/g','').trim().toLowerCase() == product.name.replace('/\s+/g','').trim().toLowerCase()) {
       throw new Error('product name already exist')
     }
   })
@@ -103,7 +104,8 @@ Product.beforeCreate(async (product,options)=>{
 Product.beforeUpdate(async (product,options)=>{
   const checkName = await Product.findAll()
   checkName.forEach(e => {
-    if(e.name.replace('/\s+/g','').trim().toLowercase() == product.name.replace('/\s+/g','').trim().toLowercase()) {
+    let name = e.dataValues.name
+    if(name.replace('/\s+/g','').trim().toLowerCase() == product.name.replace('/\s+/g','').trim().toLowerCase()) {
       throw new Error('product name already exist')
     }
   })
