@@ -18,10 +18,7 @@ module.exports = {
               throw new Error('Please enter valid category name')
             }
           }
-        },
-      set(value) {
-        this.setDataValue('name',value.trim().toLowerCase())
-      }
+        }
       },
       createdAt: {
         allowNull: false,

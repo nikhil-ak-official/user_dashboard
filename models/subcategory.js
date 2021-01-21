@@ -19,9 +19,6 @@ const Subcategory = mysqlConnection.define('Subcategories', {
             throw new Error('Please enter valid subcategory name')
           }
         }
-      },
-      set(value) {
-        this.setDataValue('name',value.trim().toLowerCase())
       }
     },
     category_id: {
@@ -42,6 +39,24 @@ const Subcategory = mysqlConnection.define('Subcategories', {
       type: Sequelize.DATE
     }
   });
+
+Subcategory.beforeCreate(async (subcategory,options)=>{
+  const checkName = await Subcategory.findAll()
+  checkName.forEach(e => {
+    if(e.replace('/\s+/g','').trim().toLowercase() == subcategory.name.replace('/\s+/g','').trim().toLowercase()) {
+      throw new Error('subcategory name already exist')
+    }
+  })
+});
+
+Subcategory.beforeUpdate(async (subcategory,options)=>{
+  const checkName = await Subcategory.findAll()
+  checkName.forEach(e => {
+    if(e.replace('/\s+/g','').trim().toLowercase() == subcategory.name.replace('/\s+/g','').trim().toLowercase()) {
+      throw new Error('subcategory name already exist')
+    }
+  })
+});
 
   // associations
 

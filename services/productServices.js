@@ -20,6 +20,14 @@ const createProduct = async (req,res) => {
         }
         else {
             const {category, ...others} = req.body
+            const ifSubs = await Subcategory.findAll({
+                where: {
+                    category_id: req.categoryId
+                }
+            })
+            if(ifSubs.length!=0) {
+                return res.status.send({"error": 400, "message": "cannot add to categories having subcategories"})
+            }
             log.debug('get category id', req.categoryId)
             const newProduct = await Product.create({...others, image: req.file.path,category_id: req.categoryId})
             log.info('Outgoin response from createProduct', {"respone": newProduct.dataValues})

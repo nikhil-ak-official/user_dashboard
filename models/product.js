@@ -89,7 +89,25 @@ const Product = mysqlConnection.define('Products', {
     type: Sequelize.DATE
   }
 }
-)
+);
+
+Product.beforeCreate(async (product,options)=>{
+  const checkName = await Product.findAll()
+  checkName.forEach(e => {
+    if(e.replace('/\s+/g','').trim().toLowercase() == product.name.replace('/\s+/g','').trim().toLowercase()) {
+      throw new Error('product name already exist')
+    }
+  })
+});
+
+Product.beforeUpdate(async (product,options)=>{
+  const checkName = await Product.findAll()
+  checkName.forEach(e => {
+    if(e.replace('/\s+/g','').trim().toLowercase() == product.name.replace('/\s+/g','').trim().toLowercase()) {
+      throw new Error('product name already exist')
+    }
+  })
+});
 
 Category.hasMany(Product, {foreignKey: 'category_id'});
 Product.belongsTo(Category, {foreignKey: 'category_id'});

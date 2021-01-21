@@ -18,9 +18,6 @@ module.exports = {
               throw new Error('Please enter valid subcategory name')
             }
           }
-        },
-        set(value) {
-          this.setDataValue('name',value.trim().toLowerCase())
         }
       },
       category_id: {

@@ -18,10 +18,7 @@ const Category = mysqlConnection.define('Categories', {
           throw new Error('Please enter valid category name')
         }
       }
-    },
-  set(value) {
-    this.setDataValue('name',value.trim().toLowerCase())
-  }
+    }
   },
   createdAt: {
     allowNull: false,
@@ -32,5 +29,24 @@ const Category = mysqlConnection.define('Categories', {
     type: Sequelize.DATE
   }
 })
+
+Category.beforeCreate(async (category,options)=>{
+  const checkName = await Category.findAll()
+  checkName.forEach(e => {
+    if(e.replace('/\s+/g','').trim().toLowercase() == category.name.replace('/\s+/g','').trim().toLowercase()) {
+      throw new Error('category name already exist')
+    }
+  })
+});
+
+
+Category.beforeUpdate(async (category,options)=>{
+  const checkName = await Category.findAll()
+  checkName.forEach(e => {
+    if(e.replace('/\s+/g','').trim().toLowercase() == category.name.replace('/\s+/g','').trim().toLowercase()) {
+      throw new Error('category name already exist')
+    }
+  })
+});
 
 module.exports = Category
