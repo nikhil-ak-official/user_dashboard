@@ -25,6 +25,7 @@ const createProduct = async (req,res) => {
                     category_id: req.categoryId
                 }
             })
+            log.debug('',ifSubs)
             if(ifSubs.length!=0) {
                 return res.status.send({"error": 400, "message": "cannot add to categories having subcategories"})
             }
@@ -202,5 +203,24 @@ const getProducts = async(req,res) => {
     }    
 }
 
-module.exports = {createProduct, editProduct, removeProduct, getProducts}
+const productsHome = async(req,res) => {
+    try{
+        log.info('Incoming request to productsHome')
+        const homeProducts = await Subcategory.findAll({
+            limit: 4,
+            include: {
+                model: Product,
+                limit: 10
+            }
+        })
+        log.info('Outgoin response from productsHome', {"respone": homeProducts})
+        res.status(200).send({"success": 200, "message": "Home page content", "data": homeProducts})
+    }
+    catch(err){
+        log.error('Error accesssing productsHome', {"error": err})
+        res.status(400).send({"error": 400, "message": err.message })
+    }
+}
+
+module.exports = {createProduct, editProduct, removeProduct, getProducts, productsHome}
 

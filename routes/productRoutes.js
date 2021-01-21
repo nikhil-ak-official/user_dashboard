@@ -2,7 +2,7 @@ const express = require('express')
 const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
 const getCategoryId = require('../middleware/getCategoryId')
-const {createProduct,editProduct,removeProduct,getProducts} = require('../services/productServices')
+const {createProduct,editProduct,removeProduct,getProducts, productsHome} = require('../services/productServices')
 const router = express.Router()
 
 
@@ -78,6 +78,9 @@ router.patch('/:id', authenticateToken, authorized(['admin']), function(req,res,
 router.delete('/:id', authenticateToken, authorized(['admin']), removeProduct)
 
 router.get('/', authenticateToken, authorized(['admin', 'user']), getCategoryId,getProducts)
+
+router.get('/home', authenticateToken, authorized(['admin', 'user']),productsHome)
+
 
 // router.post('/image/:id', function(req,res,next) {
     
