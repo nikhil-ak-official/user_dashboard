@@ -7,6 +7,14 @@ module.exports = {
      name: 'clothing',
      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
      updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+  },{
+      name: 'footwear',
+     createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+     updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+  }, {
+    name: 'electronics equipments',
+     createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+     updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
   }
 ])
 

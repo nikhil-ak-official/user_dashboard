@@ -16,7 +16,36 @@ module.exports = {
      category_id:1,
      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
       updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
-  }])
+  },
+{
+  name: 'Shoes',
+     category_id:2,
+     createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+      updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+},
+{
+  name: 'TV',
+     category_id:3,
+     createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+      updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+},
+{
+  name: 'Shirts',
+     category_id:1,
+     createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+      updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+}, {
+  name: 'Sliders',
+     category_id:2,
+     createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+      updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+}, {
+  name: 'Mobiles',
+     category_id:3,
+     createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+      updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+}
+])
   },
 
   down: async (queryInterface, Sequelize) => {

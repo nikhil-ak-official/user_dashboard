@@ -24,7 +24,78 @@ module.exports = {
       updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
 
 
-   }])
+   }, 
+    {
+      name: 'Puma shoes for Men',
+      description: 'Best casual shoes',
+      price: 1299,
+      status: 'active',
+      quantity: 10,
+      image: 'images/2021-01-18.jpg',
+      category_id: 2,
+      subcategory_id: 2,
+      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+       updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+ 
+ 
+    },
+    {
+      name: 'Sony bravia',
+      description: 'Best hd display tv',
+      price: 50000,
+      status: 'active',
+      quantity: 10,
+      image: 'images/2021-01-18.jpg',
+      category_id: 3,
+      subcategory_id: 3,
+      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+       updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+ 
+ 
+    },
+    {
+      name: 'Highlander shirt for Men',
+      description: 'Best slim fit casual shirt with stripes',
+      price: 999,
+      status: 'active',
+      quantity: 10,
+      image: 'images/2021-01-18.jpg',
+      category_id: 1,
+      subcategory_id: 4,
+      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+       updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+ 
+ 
+    },
+    {
+      name: 'Nike slider for Men',
+      description: 'Best casual slidersnfor men',
+      price: 1299,
+      status: 'active',
+      quantity: 10,
+      image: 'images/2021-01-18.jpg',
+      category_id: 2,
+      subcategory_id: 5,
+      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+       updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+ 
+ 
+    },
+    {
+      name: 'Samsung A50',
+      description: 'high quality display with long battery backup ',
+      price: 50000,
+      status: 'active',
+      quantity: 10,
+      image: 'images/2021-01-18.jpg',
+      category_id: 3,
+      subcategory_id: 6,
+      createdAt: Sequelize.literal(`CURRENT_TIMESTAMP`),
+       updatedAt: Sequelize.literal(`CURRENT_TIMESTAMP`)
+ 
+ 
+    }
+  ])
   },
 
   down: async (queryInterface, Sequelize) => {
