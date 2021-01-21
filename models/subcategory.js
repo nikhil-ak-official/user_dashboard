@@ -13,7 +13,12 @@ const Subcategory = mysqlConnection.define('Subcategories', {
       type: Sequelize.STRING,
       unique: true,
       validate: {
-          isAlpha: true
+        validator(value) {
+          const alpha = /^[a-zA-Z ]*$/;
+          if(!value.match(alpha)) {
+            throw new Error('Please enter valid subcategory name')
+          }
+        }
       },
       set(value) {
         this.setDataValue('name',value.trim().toLowerCase())

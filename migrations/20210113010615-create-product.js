@@ -12,7 +12,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         unique:true,
-
+        validate: {
+          validator(value) {
+            const alpha = /^[a-zA-Z ]*$/;
+            if(!value.match(alpha)) {
+              throw new Error('Please enter valid product name')
+            }
+          }
+        }
 
       },
       description: {
