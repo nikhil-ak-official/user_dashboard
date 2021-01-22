@@ -20,7 +20,6 @@ const createProduct = async (req,res) => {
             res.status(201).send({"success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues})
         }
         else {
-            console.log('h');
             const {category, ...others} = req.body
             const ifSubs = await Subcategory.findAll({
                 where: {
