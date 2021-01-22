@@ -18,6 +18,6 @@ router.delete('/:id', authenticateToken, authorized(['admin']),deleteSubcategory
 
 
 // get list of subcategories and categories
-router.get('/', authenticateToken, authorized(['admin','user']),listOfSubs)
+router.get('/', authenticateToken, authorized(['admin','user']), listOfSubs)
 
 module.exports = router

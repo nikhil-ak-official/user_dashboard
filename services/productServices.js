@@ -20,6 +20,7 @@ const createProduct = async (req,res) => {
             res.status(201).send({"success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues})
         }
         else {
+            console.log('h');
             const {category, ...others} = req.body
             const ifSubs = await Subcategory.findAll({
                 where: {
@@ -28,7 +29,7 @@ const createProduct = async (req,res) => {
             })
             log.debug('',ifSubs)
             if(ifSubs.length!=0) {
-                return res.status.send({"error": 400, "message": "cannot add to categories having subcategories"})
+                return res.status(400).send({"error": 400, "message": "cannot add to categories having subcategories"})
             }
             log.debug('get category id', req.categoryId)
             const newProduct = await Product.create({...others, image: req.file.path,category_id: req.categoryId})
