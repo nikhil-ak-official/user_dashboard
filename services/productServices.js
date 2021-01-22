@@ -4,6 +4,7 @@ const Subcategory = require('../models/subcategory')
 const log = require('../logs/logger')
 const Product = require('../models/product')
 const fs = require('fs')
+const { Op } = require('sequelize')
 
 
 const createProduct = async (req,res) => {
@@ -159,6 +160,9 @@ const getProducts = async(req,res) => {
             const productsUnderCategories = await Product.findAll({
                 where: {
                     category_id: req.categoryId,
+                    name: {
+                        [Op.substring]: req.query.search? req.query.search:''
+                    }
                 },
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
@@ -171,7 +175,10 @@ const getProducts = async(req,res) => {
         if(req.query.subcategory) {
             const productsUnderSubcategories = await Product.findAll({
                 where: {
-                    subcategory_id: req.subcategoryId
+                    subcategory_id: req.subcategoryId,
+                    name: {
+                        [Op.substring]: req.query.search? req.query.search:''
+                    }
                 },
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
@@ -185,6 +192,13 @@ const getProducts = async(req,res) => {
         }
         else {
             const allProducts = await Product.findAll({
+                where: {
+                        name: {
+                            [Op.substring]: req.query.search? req.query.search:''
+                            
+                        }
+                    
+                },
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
                 order: req.query.property? [`${req.query.property}`, `${req.query.sort}`]: null
