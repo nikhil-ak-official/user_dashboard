@@ -10,7 +10,8 @@ const Logger = require('bunyan')
 
 const createProduct = async (req, res) => {
     try {
-        log.info('Incoming request to createProduct', { "request": req.body})
+        log.info('Incoming request to createProduct', { "request": req.body })
+        log.debug('get file', req.file)
         if (req.body.subcategory) {
             const { category, subcategory, ...others } = req.body
             log.debug('get file', req.file)
