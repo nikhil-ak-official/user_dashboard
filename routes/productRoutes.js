@@ -2,6 +2,8 @@ const express = require('express')
 const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
 const getCategoryId = require('../middleware/getCategoryId')
+const log = require('../logs/logger')
+
 const {createProduct,editProduct,removeProduct,getProducts, productsHome} = require('../services/productServices')
 const router = express.Router()
 
@@ -51,6 +53,8 @@ router.post('/create', authenticateToken, authorized(['admin']), function(req,re
 
         }
         else {
+            log.info('Outgoing response from multer middleware')
+
             next()
         }
     }
@@ -69,6 +73,7 @@ router.patch('/:id', authenticateToken, authorized(['admin']), function(req,res,
 
         }
         else {
+            log.info('Outgoing response from multer middleware')
             next()
         }
     }
