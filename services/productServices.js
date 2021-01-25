@@ -88,8 +88,7 @@ const editProduct = async (req, res) => {
 
         if (req.file) {
             const { id, createdAt, updatedAt, image, ...others } = product.dataValues;
-            console.log(image);
-            // fs.unlinkSync(image)
+            fs.unlinkSync(image)
             const updatedProduct = await Product.update({ image: req.file.path, ...others }, {
                 where: {
                     id: req.params.id
@@ -97,7 +96,6 @@ const editProduct = async (req, res) => {
             individualHooks: true
             }
             )
-            console.log(updatedProduct);
             log.info('Outgoin response from editProduct where subcategory exist', { "respone": updatedProduct[1][0].dataValues })
             res.status(200).send({ "success": 200, "message": "Product edited successfully by admin", "data": updatedProduct[1][0].dataValues })
         }
