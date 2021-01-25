@@ -10,10 +10,10 @@ const Logger = require('bunyan')
 
 const createProduct = async (req, res) => {
     try {
-        log.info('Incoming request to createProduct', { "request": req.body })
-        console.log(req.body);
+        log.info('Incoming request to createProduct', { "request": req.body})
         if (req.body.subcategory) {
             const { category, subcategory, ...others } = req.body
+            log.debug('get file', req.file)
             log.debug('get category id', req.categoryId)
             log.debug('get category id', req.subcategoryId)
             const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId, subcategory_id: req.subcategoryId })
@@ -27,15 +27,10 @@ const createProduct = async (req, res) => {
                     category_id: req.categoryId
                 }
             })
-<<<<<<< HEAD
-            log.debug('',ifSubs)
-            if(ifSubs.length!=0) {
-                return res.status(400).send({"error": 400, "message": "cannot add to categories having subcategories"})
-=======
             log.debug('', ifSubs)
             if (ifSubs.length != 0) {
                 return res.status(400).send({ "error": 400, "message": "cannot add to categories having subcategories" })
->>>>>>> 820c7692d2b0bfee17c75655510a341e2df6fa30
+
             }
             log.debug('get category id', req.categoryId)
             const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId })
