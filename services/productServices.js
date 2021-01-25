@@ -89,26 +89,35 @@ const editProduct = async (req, res) => {
         if (req.file) {
             const { id, createdAt, updatedAt, image, ...others } = product.dataValues;
             fs.unlinkSync(image)
-            const updatedProduct = await Product.update({ image: req.file.path, ...others }, {
+            console.log(others);
+            const updatedProduct = await Product.update({image: req.file.path, ...others}, {
                 where: {
                     id: req.params.id
-                },
-            individualHooks: true
-            }
-            )
-            log.info('Outgoin response from editProduct where subcategory exist', { "respone": updatedProduct[1][0].dataValues })
-            res.status(200).send({ "success": 200, "message": "Product edited successfully by admin", "data": updatedProduct[1][0].dataValues })
+                }
+            })
+            console.log(updatedProduct);
+            const editedProduct = await Product.findOne({
+                where: {
+                    id: req.params.id
+                }
+            })
+            log.info('Outgoin response from editProduct where subcategory exist', { "respone": editedProduct.dataValues })
+            res.status(200).send({ "success": 200, "message": "Product edited successfully by admin", "data": editedProduct.dataValues })
         }
         else {
             const { id, createdAt, updatedAt, ...others } = product.dataValues;
             const updatedProduct = await Product.update(others, {
                 where: {
                     id: req.params.id
-                },
-                individualHooks: true
+                }
             })
-            log.info('Outgoin response from editProduct where subcategory exist', { "respone": updatedProduct[1][0].dataValues })
-            res.status(200).send({ "success": 200, "message": "Product edited successfully by admin", "data": updatedProduct[1][0].dataValues })
+            const editedProduct = await Product.findOne({
+                where: {
+                    id: req.params.id
+                }
+            })
+            log.info('Outgoin response from editProduct where subcategory exist', { "respone": editedProduct.dataValues })
+            res.status(200).send({ "success": 200, "message": "Product edited successfully by admin", "data": editedProduct.dataValues })
         }
     }
     catch (err) {
