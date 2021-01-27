@@ -4,7 +4,7 @@ const Subcategory = require('../models/subcategory')
 const log = require('../logs/logger')
 const Product = require('../models/product')
 const fs = require('fs')
-const { Op } = require('sequelize')
+const { Op, Sequelize } = require('sequelize')
 const Logger = require('bunyan')
 
 
@@ -172,13 +172,28 @@ const getProducts = async (req, res) => {
             const productsUnderCategories = await Product.findAll({
                 where: {
                     category_id: req.categoryId,
-                    name: {
-                        [Op.substring]: req.query.search ? req.query.search : ''
+                    [Op.or]: [
+                        { name: {
+                            [Op.substring]: req.query.search ? req.query.search : ''
+    
+                        }
+                    },
+                    {
+                        '$Subcategory.name$': {
+                            [Op.substring]: req.query.search ? req.query.search : ''
+    
+                        }
                     }
+                ]
+                },
+                include: {
+                    model: Subcategory,
+                    attributes: []
+
                 },
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
-                order: req.query.property ? [`${req.query.property}`, `${req.query.sort}`] : null
+                order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
             })
             log.info('Outgoin response from getProducts', { "respone": productsUnderCategories })
 
@@ -194,7 +209,7 @@ const getProducts = async (req, res) => {
                 },
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
-                order: req.query.property ? [`${req.query.property}`, `${req.query.sort}`] : null
+                order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
 
 
             })
@@ -205,15 +220,40 @@ const getProducts = async (req, res) => {
         else {
             const allProducts = await Product.findAll({
                 where: {
-                    name: {
-                        [Op.substring]: req.query.search ? req.query.search : ''
-
+                    [Op.or]: [
+                        { name: {
+                            [Op.substring]: req.query.search ? req.query.search : ''
+    
+                        }
+                    },
+                    {
+                        '$Category.name$': {
+                            [Op.substring]: req.query.search ? req.query.search : ''
+    
+                        }
+                    }, 
+                    {
+                        '$Subcategory.name$': {
+                            [Op.substring]: req.query.search ? req.query.search : ''
+    
+                        }
                     }
+                    ]
+                   
 
                 },
+                include: [{
+                    model: Category,
+                    attributes: []
+                },
+                {
+                    model: Subcategory,
+                    attributes:[]
+                }
+            ],
                 limit: parseInt(req.query.range) || null,
                 offset: parseInt(req.query.range) * req.query.page || null,
-                order: req.query.property ? [`${req.query.property}`, `${req.query.sort}`] : null
+                order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
 
 
 
@@ -228,6 +268,8 @@ const getProducts = async (req, res) => {
         res.status(400).send({ "error": 400, "message": err.message })
     }
 }
+
+
 
 const productsHome = async (req, res) => {
     try {
