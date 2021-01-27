@@ -35,7 +35,7 @@ const getUsersList = async (req, res) => {
                         role_id: req.user.role_id
                     },
                     attributes: ['firstname', 'lastname', 'email', 'status'],
-                    order:['createdAt', 'DESC' ]
+                    order:[['createdAt', 'DESC' ]]
                 })
                 log.info('Outgoing response from getUsersList by user', {"response": userList} )
                 res.status(200).send({"success": 200, "message": "user sees the list of users", "data" :userList})
