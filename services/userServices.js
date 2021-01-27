@@ -15,6 +15,7 @@ const getUsersList = async (req, res) => {
         if (role == "admin") {
             log.info('Incoming request to getUsersList by admin')
             const usersList = await User.findAll({
+                order: [['createdAt', 'DESC']],
                 attributes: {
                     exclude: ['password', 'token', 'role_id', 'resetPasswordToken']
                 },
@@ -33,7 +34,8 @@ const getUsersList = async (req, res) => {
                     where: {
                         role_id: req.user.role_id
                     },
-                    attributes: ['firstname', 'lastname', 'email', 'status']
+                    attributes: ['firstname', 'lastname', 'email', 'status'],
+                    order:['createdAt', 'DESC' ]
                 })
                 log.info('Outgoing response from getUsersList by user', {"response": userList} )
                 res.status(200).send({"success": 200, "message": "user sees the list of users", "data" :userList})

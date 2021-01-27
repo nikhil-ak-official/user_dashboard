@@ -87,8 +87,9 @@ const listOfSubs = async(req,res) => {
         log.info('Incoming request to getListOfSubcategory')
 
         const listAll = await Category.findAll({
+            order: [['createdAt', 'DESC' ], [Subcategory, 'createdAt', 'DESC' ]],
             include: {
-                model: Subcategory
+                model: Subcategory,
             }
         })
         log.info('Outgoin response from getListOfSubcategory', {"response": listAll.dataValues})
