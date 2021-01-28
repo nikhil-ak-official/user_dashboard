@@ -6,6 +6,8 @@ const Product = require('../models/product')
 const fs = require('fs')
 const { Op, Sequelize } = require('sequelize')
 const Logger = require('bunyan')
+const Cart = require('../models/cart')
+const ProductsCart = require('../models/productscart')
 
 
 const createProduct = async (req, res) => {
@@ -318,7 +320,7 @@ const countProducts = async(req,res) => {
     try {
         log.info('Incoming request to countProducts')
         const count = await Product.count({
-            group: ['subcategory_id']
+            group: ['category_id', 'subcategory_id'],
         })
         log.info('Outgoin response from countProducts', {"response": count})
 
@@ -333,6 +335,29 @@ const countProducts = async(req,res) => {
             res.status(400).send({"error": 400, "message": err.message })
 
         }
+    }
+}
+
+const trendingProducts = async(req,res) => {
+    try{
+        log.info('Incoming request to trendingProducts')
+        const ranking = await ProductsCart.findAll({
+            group: ['cart_id']
+        })
+        log.info('Outgoin response from trendingProducts', {"response": ranking})
+
+        res.status(200).send({"success": 200, "message": "", "data": ranking})
+
+    }
+    catch(err) {
+        log.error('Error accesssing trending Products', {"error": err})
+        if(err.errors) {
+            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+        }
+        else{
+            res.status(400).send({"error": 400, "message": err.message })
+
+        } 
     }
 }
 
