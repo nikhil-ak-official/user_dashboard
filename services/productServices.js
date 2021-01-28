@@ -57,6 +57,7 @@ const createProduct = async (req, res) => {
 const editProduct = async (req, res) => {
     try {
         log.info('Incoming request to editProduct', { "request": req.body })
+        const updateKeys = Object.keys(req.body)
         const product = await Product.findOne({
             where: {
                 id: req.params.id
@@ -85,7 +86,6 @@ const editProduct = async (req, res) => {
                 req.body['category_id'] = req.categoryId
             }
 
-            const updateKeys = Object.keys(req.body)
             updateKeys.forEach(e => {
                 if (req.body[e]) {
                     if (e == "price" || e == "quantity") {
