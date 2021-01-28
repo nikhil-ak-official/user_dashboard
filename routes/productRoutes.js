@@ -82,7 +82,7 @@ router.patch('/:id', authenticateToken, authorized(['admin']), function(req,res,
 // delete product
 router.delete('/:id', authenticateToken, authorized(['admin']), removeProduct)
 
-router.get('/:id?', authenticateToken, authorized(['admin', 'user']), getCategoryId,getProducts)
+router.get('/?id=', authenticateToken, authorized(['admin', 'user']), getCategoryId,getProducts)
 
 router.get('/home', authenticateToken, authorized(['admin', 'user']),productsHome)
 

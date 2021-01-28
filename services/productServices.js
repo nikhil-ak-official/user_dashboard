@@ -179,10 +179,10 @@ const removeProduct = async (req, res) => {
 const getProducts = async (req, res) => {
     try {
         log.info('Incoming request to getProducts')
-        if(req.params.id) {
+        if(req.query.id) {
             const product = await Product.findOne({
                 where: {
-                    id: req.params.id
+                    id: req.query.id
                 }
             })
             log.info('Outgoin response from getProducts', { "respone": product.dataValues })
@@ -291,7 +291,7 @@ const getProducts = async (req, res) => {
         log.error('Error accesssing getProducts', { "error": err })
         res.status(400).send({ "error": 400, "message": err.message })
     }
-}
+};
 
 
 
