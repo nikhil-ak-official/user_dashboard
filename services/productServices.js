@@ -11,33 +11,33 @@ const Logger = require('bunyan')
 const createProduct = async (req, res) => {
     try {
         log.info('Incoming request to createProduct', { "request": req.body })
-        log.debug('get file', req.file)
-
-        if (req.body.subcategory) {
-            const { category, subcategory, ...others } = req.body
-            log.debug('get category id', req.categoryId)
-            log.debug('get category id', req.subcategoryId)
-            const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId, subcategory_id: req.subcategoryId })
-            log.info('Outgoin response from createProduct', { "respone": newProduct.dataValues })
-            res.status(201).send({ "success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues })
-        }
-        else {
-            const { category, ...others } = req.body
-            const ifSubs = await Subcategory.findAll({
-                where: {
-                    category_id: req.categoryId
-                }
-            })
-            log.debug('', ifSubs)
-            if (ifSubs.length != 0) {
-                return res.status(400).send({ "error": 400, "message": "cannot add to categories having subcategories" })
+            if (req.body.subcategory) {
+                const { category, subcategory, ...others } = req.body
+                log.debug('get category id', req.categoryId)
+                log.debug('get category id', req.subcategoryId)
+                const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId, subcategory_id: req.subcategoryId })
+                log.info('Outgoin response from createProduct', { "respone": newProduct.dataValues })
+                res.status(201).send({ "success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues })
             }
-            log.debug('get category id', req.categoryId)
-            const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId })
-            log.info('Outgoin response from createProduct', { "respone": newProduct.dataValues })
-            res.status(201).send({ "success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues })
+            else {
+                const { category, ...others } = req.body
+                const ifSubs = await Subcategory.findAll({
+                    where: {
+                        category_id: req.categoryId
+                    }
+                })
+                log.debug('', ifSubs)
+                if (ifSubs.length != 0) {
+                    return res.status(400).send({ "error": 400, "message": "cannot add to categories having subcategories" })
+                }
+                log.debug('get category id', req.categoryId)
+                const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId })
+                log.info('Outgoin response from createProduct', { "respone": newProduct.dataValues })
+                res.status(201).send({ "success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues })
+            }
         }
-    }
+
+        
     catch (err) {
         log.error('Error accesssing createProduct', { "error": err })
         if (err.errors) {

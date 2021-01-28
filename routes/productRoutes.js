@@ -41,17 +41,19 @@ limits: {
 router.post('/create', authenticateToken, authorized(['admin']), function(req,res,next) {
     
     upload(req, res, function(err) {
-        if(!err) {
-            res.status(400).send({"error":400, "message":'Please select a file to upload'})
-            
-        }
+  
         if(err instanceof multer.MulterError) {
-            res.status(400).send({"error":400, "message":err.message})
+            return res.status(400).send({"error":400, "message":err.message})
         }
         else if(err) {
-            res.status(400).send({"error":400, "message":err})
+            return res.status(400).send({"error":400, "message":err})
 
         }
+    
+        else if(!req.file) {
+            return res.status(400).send({"error":400, "message": "please upload file"})
+        }
+
         else {
             log.info('Outgoing response from multer middleware')
 
