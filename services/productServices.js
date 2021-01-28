@@ -182,7 +182,7 @@ const getProducts = async (req, res) => {
         if(req.query.id) {
             const product = await Product.findOne({
                 where: {
-                    id: req.query.id
+                    id: parseInt(req.query.id)
                 }
             })
             log.info('Outgoin response from getProducts', { "respone": product.dataValues })
