@@ -315,6 +315,7 @@ const productsHome = async (req, res) => {
                 limit: 10
             }
         })
+        await setAsync('key', homeProducts)
         log.info('Outgoin response from productsHome', { "respone": homeProducts })
         res.status(200).send({ "success": 200, "message": "Home page content", "data": homeProducts })
     }
