@@ -4,7 +4,7 @@ const authorized = require('../middleware/admin')
 const getCategoryId = require('../middleware/getCategoryId')
 const log = require('../logs/logger')
 
-const {createProduct,editProduct,removeProduct,getProducts, productsHome} = require('../services/productServices')
+const {createProduct,editProduct,removeProduct,getProducts, productsHome,countProducts} = require('../services/productServices')
 const router = express.Router()
 
 
@@ -85,6 +85,9 @@ router.delete('/:id', authenticateToken, authorized(['admin']), removeProduct)
 router.get('/', authenticateToken, authorized(['admin', 'user']), getCategoryId,getProducts)
 
 router.get('/home', authenticateToken, authorized(['admin', 'user']),productsHome)
+
+router.get('/count', authenticateToken, authorized(['admin']), countProducts)
+
 
 
 module.exports = router

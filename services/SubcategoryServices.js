@@ -121,4 +121,27 @@ const listOfSubs = async(req,res) => {
     }
 }
 
-module.exports = {createSubcategory,editSubcategory,deleteSubcategory,listOfSubs}
+
+const countSubcategory = async(req,res) => {
+    try {
+        log.info('Incoming request to countSubcategory')
+        const count = await Subcategory.count({
+            group: ['category_id']
+        })
+        log.info('Outgoin response from countSubcategory', {"response": count})
+
+        res.status(200).send({"success": 200, "message": "total number of subcategories under each categories", "data": count})
+    }
+    catch(err) {
+        log.error('Error accesssing countSubategory', {"error": err})
+        if(err.errors) {
+            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+        }
+        else{
+            res.status(400).send({"error": 400, "message": err.message })
+
+        }
+    }
+}
+
+module.exports = {createSubcategory,editSubcategory,deleteSubcategory,listOfSubs,countSubcategory}

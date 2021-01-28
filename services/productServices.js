@@ -314,5 +314,27 @@ const productsHome = async (req, res) => {
     }
 }
 
-module.exports = { createProduct, editProduct, removeProduct, getProducts, productsHome }
+const countProducts = async(req,res) => {
+    try {
+        log.info('Incoming request to countProducts')
+        const count = await Product.count({
+            group: ['subcategory_id']
+        })
+        log.info('Outgoin response from countProducts', {"response": count})
+
+        res.status(200).send({"success": 200, "message": "total number of products under each subcategories", "data": count})
+    }
+    catch(err) {
+        log.error('Error accesssing countProducts', {"error": err})
+        if(err.errors) {
+            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+        }
+        else{
+            res.status(400).send({"error": 400, "message": err.message })
+
+        }
+    }
+}
+
+module.exports = { createProduct, editProduct, removeProduct, getProducts, productsHome, countProducts }
 

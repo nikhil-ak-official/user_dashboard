@@ -3,7 +3,7 @@ const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
 const getCategoryId = require('../middleware/getCategoryId')
 
-const {createSubcategory,editSubcategory,deleteSubcategory,listOfSubs}= require('../services/SubcategoryServices')
+const {createSubcategory,editSubcategory,deleteSubcategory,listOfSubs,countSubcategory}= require('../services/SubcategoryServices')
 
 const router = express.Router()
 
@@ -19,5 +19,8 @@ router.delete('/:id', authenticateToken, authorized(['admin']),deleteSubcategory
 
 // get list of subcategories and categories
 router.get('/', authenticateToken, authorized(['admin','user']), listOfSubs)
+
+// count subcategories
+router.get('/count', authenticateToken, authorized(['admin']), countSubcategory)
 
 module.exports = router

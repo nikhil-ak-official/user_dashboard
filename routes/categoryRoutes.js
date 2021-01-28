@@ -1,7 +1,7 @@
 const express = require('express')
 const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
-const {createCategory,editCategory,deleteCategory} = require('../services/categoryServices')
+const {createCategory,editCategory,deleteCategory,countCategory} = require('../services/categoryServices')
 
 
 const router = express.Router()
@@ -14,5 +14,8 @@ router.put('/:id', authenticateToken, authorized(['admin']) ,editCategory)
 
 // delete category by admin
 router.delete('/:id', authenticateToken, authorized(['admin']),deleteCategory );
+
+// count categories
+router.get('/count', authenticateToken, authorized(['admin']), countCategory)
 
 module.exports = router

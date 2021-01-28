@@ -77,4 +77,25 @@ const deleteCategory = async(req,res) => {
     }
 }
 
-module.exports = {createCategory,editCategory,deleteCategory}
+const countCategory = async(req,res) => {
+    try {
+        log.info('Incoming request to countCategory')
+        const count = await Category.count()
+        log.info('Outgoin response from countCategory', {"response": count})
+
+        res.status(200).send({"success": 200, "message": "total number of categories", "data": count})
+    }
+    catch(err) {
+        log.error('Error accesssing countCategory', {"error": err})
+        if(err.errors) {
+            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+        }
+        else{
+            res.status(400).send({"error": 400, "message": err.message })
+
+        }
+    }
+}
+
+
+module.exports = {createCategory,editCategory,deleteCategory, countCategory}
