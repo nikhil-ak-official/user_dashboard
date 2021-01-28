@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     },
     
     filename: function(req,file,cb){
-        cb(null, Date.now()+file.originalname)
+        cb(null, Date.now()+file.originalname.replace('/\s+/g',''))
     }
 })
 
@@ -32,7 +32,7 @@ fileFilter(req, file, cb){
     
 },
 limits: {
-    fileSize: 1000000
+    fileSize: 5000000
 }
 }).single('avatar')
 
@@ -41,7 +41,7 @@ limits: {
 router.post('/create', authenticateToken, authorized(['admin']), function(req,res,next) {
     
     upload(req, res, function(err) {
-        if(!req.file) {
+        if(!err) {
             res.status(400).send({"error":400, "message":'Please select a file to upload'})
             
         }
@@ -82,39 +82,9 @@ router.patch('/:id', authenticateToken, authorized(['admin']), function(req,res,
 // delete product
 router.delete('/:id', authenticateToken, authorized(['admin']), removeProduct)
 
-router.get('/', authenticateToken, authorized(['admin', 'user']), getCategoryId,getProducts)
+router.get('/:id?', authenticateToken, authorized(['admin', 'user']), getCategoryId,getProducts)
 
 router.get('/home', authenticateToken, authorized(['admin', 'user']),productsHome)
-
-
-// router.post('/image/:id', function(req,res,next) {
-    
-//     upload(req, res, function(err) {
-//         if(!req.file) {
-//             res.status(400).send({"error":400, "message":'Please select a file to upload'})
-            
-//         }
-//         if(err instanceof multer.MulterError) {
-//             res.status(400).send({"error":400, "message":err.message})
-//         }
-//         else if(err) {
-//             res.status(400).send({"error":400, "message":err})
-
-//         }
-//         else {
-//             next()
-//         }
-//     }
-//     )}, async(req,res) => {
-//         const image = await Product.update({
-//             image: req.file.path
-//         }, {
-//             where: {
-//                 id: req.params.id
-//             }
-//         })
-//         res.status(201).send(req.file)
-// })
 
 
 module.exports = router

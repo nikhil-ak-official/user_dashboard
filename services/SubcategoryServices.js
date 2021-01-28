@@ -1,5 +1,5 @@
 const express = require('express')
-
+const Product = require('../models/product')
 const Subcategory = require('..//models/subcategory')
 const log = require('../logs/logger')
 const Category = require('../models/category')
@@ -8,10 +8,20 @@ const getCategoryId = require('../middleware/getCategoryId')
 const createSubcategory = async (req,res) => {
     try {
         log.info('Incoming request to createSubcategory', {"request": req.body})
+        const ifProductsExist = await Product.findAll({
+            where: {
+                category_id: req.categoryId
+            }
+        })
+        if(ifProductsExist.length != 0) {
+            return res.status(400).send({ "error": 400, "message": "cannot add subcategories for catgeories having products under it" })
+
+        }
         const newSubcategory = await Subcategory.create({
             name: req.body.name,
             category_id: req.categoryId,
         })
+
         log.info('Outgoin response from createSubcategory', {"response": req.categoryId})
         res.status(201).send({"success": 201, "message": "Subcategory added successfully by admin", "data": newSubcategory.dataValues})
     }
@@ -32,6 +42,15 @@ const editSubcategory = async (req,res) => {
     try {
         log.info('Incoming request to editSubcategory', {"request": req.body})
         const {category, name} = req.body
+        const ifProductsExist = await Product.findAll({
+            where: {
+                category_id: req.categoryId
+            }
+        })
+        if(ifProductsExist.length != 0) {
+            return res.status(400).send({ "error": 400, "message": "cannot add subcategories for catgeories having products under it" })
+
+        }
         const updateSubcategory = await Subcategory.update({ name:name, category_id: req.categoryId,}, {
             where: {
                 id: req.params.id

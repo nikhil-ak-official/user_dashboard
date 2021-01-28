@@ -12,9 +12,9 @@ const createProduct = async (req, res) => {
     try {
         log.info('Incoming request to createProduct', { "request": req.body })
         log.debug('get file', req.file)
+
         if (req.body.subcategory) {
             const { category, subcategory, ...others } = req.body
-            log.debug('get file', req.file)
             log.debug('get category id', req.categoryId)
             log.debug('get category id', req.subcategoryId)
             const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId, subcategory_id: req.subcategoryId })
@@ -31,7 +31,6 @@ const createProduct = async (req, res) => {
             log.debug('', ifSubs)
             if (ifSubs.length != 0) {
                 return res.status(400).send({ "error": 400, "message": "cannot add to categories having subcategories" })
-
             }
             log.debug('get category id', req.categoryId)
             const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId })
@@ -70,6 +69,17 @@ const editProduct = async (req, res) => {
             if (req.body.category) {
                 const index = updateKeys.findIndex(e => e === 'category')
                 updateKeys.splice(index, 1, 'category_id')
+                if(req.body.subcategory == null ) {
+                    const ifSubs = await Subcategory.findAll({
+                        where: {
+                            category_id: req.categoryId
+                        }
+                    })
+                    log.debug('', ifSubs)
+                    if (ifSubs.length != 0) {
+                        return res.status(400).send({ "error": 400, "message": "cannot add to categories having subcategories" })
+                    }
+                }
                 req.body['category_id'] = req.categoryId
             }
 
@@ -169,100 +179,113 @@ const removeProduct = async (req, res) => {
 const getProducts = async (req, res) => {
     try {
         log.info('Incoming request to getProducts')
-        if (req.query.category) {
-            const productsUnderCategories = await Product.findAll({
+        if(req.params.id) {
+            const product = await Product.findOne({
                 where: {
-                    category_id: req.categoryId,
-                    [Op.or]: [
-                        { name: {
-                            [Op.substring]: req.query.search ? req.query.search : ''
-    
-                        }
-                    },
-                    {
-                        '$Subcategory.name$': {
-                            [Op.substring]: req.query.search ? req.query.search : ''
-    
-                        }
-                    }
-                ]
-                },
-                include: {
-                    model: Subcategory,
-                    attributes: []
-
-                },
-                limit: parseInt(req.query.range) || null,
-                offset: parseInt(req.query.range) * req.query.page || null,
-                order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
+                    id: req.params.id
+                }
             })
-            log.info('Outgoin response from getProducts', { "respone": productsUnderCategories })
-
-            res.status(200).send({ "success": 200, "message": "List of products under a category", "data": productsUnderCategories })
-        }
-        if (req.query.subcategory) {
-            const productsUnderSubcategories = await Product.findAll({
-                where: {
-                    subcategory_id: req.subcategoryId,
-                    name: {
-                        [Op.substring]: req.query.search ? req.query.search : ''
-                    }
-                },
-                limit: parseInt(req.query.range) || null,
-                offset: parseInt(req.query.range) * req.query.page || null,
-                order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
-
-
-            })
-            log.info('Outgoin response from getProducts', { "respone": productsUnderSubcategories })
-
-            res.status(200).send({ "success": 200, "message": "List of products under a subcategory", "data": productsUnderSubcategories })
+            log.info('Outgoin response from getProducts', { "respone": product.dataValues })
+    
+            res.status(200).send({ "success": 200, "message": "Product detail", "data": product.dataValues })
         }
         else {
-            const allProducts = await Product.findAll({
-                where: {
-                    [Op.or]: [
-                        { name: {
-                            [Op.substring]: req.query.search ? req.query.search : ''
+            if (req.query.category) {
+                const productsUnderCategories = await Product.findAll({
+                    where: {
+                        category_id: req.categoryId,
+                        [Op.or]: [
+                            { name: {
+                                [Op.substring]: req.query.search ? req.query.search : ''
+        
+                            }
+                        },
+                        {
+                            '$Subcategory.name$': {
+                                [Op.substring]: req.query.search ? req.query.search : ''
+        
+                            }
+                        }
+                    ]
+                    },
+                    include: {
+                        model: Subcategory,
+                        attributes: []
     
+                    },
+                    limit: parseInt(req.query.range) || null,
+                    offset: parseInt(req.query.range) * req.query.page || null,
+                    order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
+                })
+                log.info('Outgoin response from getProducts', { "respone": productsUnderCategories })
+    
+                res.status(200).send({ "success": 200, "message": "List of products under a category", "data": productsUnderCategories })
+            }
+            if (req.query.subcategory) {
+                const productsUnderSubcategories = await Product.findAll({
+                    where: {
+                        subcategory_id: req.subcategoryId,
+                        name: {
+                            [Op.substring]: req.query.search ? req.query.search : ''
                         }
                     },
-                    {
-                        '$Category.name$': {
-                            [Op.substring]: req.query.search ? req.query.search : ''
+                    limit: parseInt(req.query.range) || null,
+                    offset: parseInt(req.query.range) * req.query.page || null,
+                    order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
     
-                        }
-                    }, 
-                    {
-                        '$Subcategory.name$': {
-                            [Op.substring]: req.query.search ? req.query.search : ''
     
+                })
+                log.info('Outgoin response from getProducts', { "respone": productsUnderSubcategories })
+    
+                res.status(200).send({ "success": 200, "message": "List of products under a subcategory", "data": productsUnderSubcategories })
+            }
+            else {
+                const allProducts = await Product.findAll({
+                    where: {
+                        [Op.or]: [
+                            { name: {
+                                [Op.substring]: req.query.search ? req.query.search : ''
+        
+                            }
+                        },
+                        {
+                            '$Category.name$': {
+                                [Op.substring]: req.query.search ? req.query.search : ''
+        
+                            }
+                        }, 
+                        {
+                            '$Subcategory.name$': {
+                                [Op.substring]: req.query.search ? req.query.search : ''
+        
+                            }
                         }
+                        ]
+                       
+    
+                    },
+                    include: [{
+                        model: Category,
+                        attributes: []
+                    },
+                    {
+                        model: Subcategory,
+                        attributes:[]
                     }
-                    ]
-                   
-
-                },
-                include: [{
-                    model: Category,
-                    attributes: []
-                },
-                {
-                    model: Subcategory,
-                    attributes:[]
-                }
-            ],
-                limit: parseInt(req.query.range) || null,
-                offset: parseInt(req.query.range) * req.query.page || null,
-                order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
-
-
-
-            })
-            log.info('Outgoin response from getProducts', { "respone": allProducts })
-            res.status(200).send({ "success": 200, "message": "List of products", "data": allProducts })
-
+                ],
+                    limit: parseInt(req.query.range) || null,
+                    offset: parseInt(req.query.range) * req.query.page || null,
+                    order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
+    
+    
+    
+                })
+                log.info('Outgoin response from getProducts', { "respone": allProducts })
+                res.status(200).send({ "success": 200, "message": "List of products", "data": allProducts })
+    
+            }
         }
+        
     }
     catch (err) {
         log.error('Error accesssing getProducts', { "error": err })
