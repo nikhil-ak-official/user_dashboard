@@ -192,8 +192,12 @@ const getProducts = async (req, res) => {
             res.status(200).send({ "success": 200, "message": "Product detail", "data": product.dataValues })
         }
         else {
+            if(!req.query.range || !req.query.page) {
+                return res.status(400).send({ "error": 400, "message": "Please input page number and range" })
+                
+            }
             if (req.query.category) {
-                const productsUnderCategories = await Product.findAll({
+                const productsUnderCategories = await Product.findAndCountAll({
                     where: {
                         category_id: req.categoryId,
                         [Op.or]: [
@@ -215,34 +219,37 @@ const getProducts = async (req, res) => {
                         attributes: []
     
                     },
-                    limit: parseInt(req.query.range) || null,
-                    offset: parseInt(req.query.range) * req.query.page || null,
+                    limit: parseInt(req.query.range),
+                    offset: parseInt(req.query.range) * req.query.page,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
                 })
-                log.info('Outgoin response from getProducts', { "respone": productsUnderCategories })
+                const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, allProducts.count)
+                
+                log.info('Outgoin response from getProducts', { "respone": {...productsUnderCategories, totalPages, currentPage} })
     
-                res.status(200).send({ "success": 200, "message": "List of products under a category", "data": productsUnderCategories })
+                res.status(200).send({ "success": 200, "message": "List of products under a category", "data":  {...productsUnderCategories, totalPages, currentPage} })
             }
             if (req.query.subcategory) {
-                const productsUnderSubcategories = await Product.findAll({
+                const productsUnderSubcategories = await Product.findAndCountAll({
                     where: {
                         subcategory_id: req.subcategoryId,
                         name: {
                             [Op.substring]: req.query.search ? req.query.search : ''
                         }
                     },
-                    limit: parseInt(req.query.range) || null,
-                    offset: parseInt(req.query.range) * req.query.page || null,
+                    limit: parseInt(req.query.range),
+                    offset: parseInt(req.query.range) * req.query.page,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
     
     
                 })
-                log.info('Outgoin response from getProducts', { "respone": productsUnderSubcategories })
+                const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, allProducts.count)
+                log.info('Outgoin response from getProducts', { "respone": {...productsUnderSubcategories, totalPages, currentPage} })
     
-                res.status(200).send({ "success": 200, "message": "List of products under a subcategory", "data": productsUnderSubcategories })
+                res.status(200).send({ "success": 200, "message": "List of products under a subcategory", "data": {...productsUnderSubcategories, totalPages, currentPage} })
             }
             else {
-                const allProducts = await Product.findAll({
+                const allProducts = await Product.findAndCountAll({
                     where: {
                         [Op.or]: [
                             { name: {
@@ -275,15 +282,16 @@ const getProducts = async (req, res) => {
                         attributes:[]
                     }
                 ],
-                    limit: parseInt(req.query.range) || null,
-                    offset: parseInt(req.query.range) * req.query.page || null,
+                    limit: parseInt(req.query.range),
+                    offset: parseInt(req.query.range) * req.query.page,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
     
     
     
                 })
-                log.info('Outgoin response from getProducts', { "respone": allProducts })
-                res.status(200).send({ "success": 200, "message": "List of products", "data": allProducts })
+                const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, allProducts.count)
+                log.info('Outgoin response from getProducts', { "respone": {...allProducts, totalPages, currentPage }})
+                res.status(200).send({ "success": 200, "message": "List of products", "data": {...allProducts, totalPages,currentPage }})
     
             }
         }
@@ -358,6 +366,13 @@ const trendingProducts = async(req,res) => {
 
         } 
     }
+}
+
+// pagination function
+const getPagination = (page, limit, totalProducts) => {
+    let currentPage = parseInt(page)
+    let totalPages = Math.ceil(totalProducts/limit)
+    return {totalPages, currentPage}
 }
 
 module.exports = { createProduct, editProduct, removeProduct, getProducts, productsHome, countProducts }
