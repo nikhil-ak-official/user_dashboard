@@ -1,15 +1,19 @@
 const express = require('express')
-const Logger = require('bunyan')
+const {getAsync} = require('../db/redisCache')
+
+const log = require('../logs/logger')
 
 
 const getCachedData = async(req,res,next) => {
     try{
-        log.info('Incoming request to getCachedData', { "request": key })
+        log.info('Incoming request to getCachedData')
         const response = await getAsync('key')
-        if(response == null) {
+
+        if(response == null)  {
             next()
         }
         else {
+
             log.info('Outcoming response from getCachedData', {"response": response})
 
             res.status(200).send({ "success": 200, "message": "cache hit", "data": response})

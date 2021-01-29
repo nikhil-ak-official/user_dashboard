@@ -16,7 +16,7 @@ const addToCart = async(req,res) => {
                 name: req.body.productName
             }
         })
-        if(getProductDetails) {
+        if(getProductDetails && req.body.productQuantity) {
             if(getProductDetails.quantity < req.body.productQuantity) {
                 return res.status(400).send({"error": 400, "message": "quantity should be less than available quantity"})
             }
