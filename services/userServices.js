@@ -87,8 +87,8 @@ const createPassword = async (req, res) => {
             })
             // res.setHeader('Content-Type', 'application/json')
             log.info('Outgoing response from createPassword', {"response": "redirected to login"})
-            // res.redirect(`http://user-dashboard.qburst.build:3002/user/login?action=login&token=${req.token}`)
-            res.redirect(`http://localhost:3002/user/login?action=login&token=${req.token}`)
+            res.redirect(`http://user-dashboard.qburst.build:3002/user/login?action=login&token=${req.token}`)
+            // res.redirect(`http://localhost:3002/user/login?action=login&token=${req.token}`)
 
 
         }
