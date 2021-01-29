@@ -222,11 +222,11 @@ const getProducts = async (req, res) => {
                     offset: parseInt(req.query.page)>1?parseInt(req.query.range) * req.query.page: null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
                 })
-                const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, allProducts.count)
+                const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, productsUnderCategories.count)
                 
                 log.info('Outgoin response from getProducts', { "respone": {...productsUnderCategories, totalPages, currentPage} })
     
-                res.status(200).send({ "success": 200, "message": "List of products under a category", "data":  {...productsUnderCategories, totalPages, currentPage} })
+                return res.status(200).send({ "success": 200, "message": "List of products under a category", "data":  {...productsUnderCategories, totalPages, currentPage} })
             }
             if (req.query.subcategory) {
                 const productsUnderSubcategories = await Product.findAndCountAll({
@@ -242,10 +242,10 @@ const getProducts = async (req, res) => {
     
     
                 })
-                const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, allProducts.count)
+                const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, productsUnderSubcategories.count)
                 log.info('Outgoin response from getProducts', { "respone": {...productsUnderSubcategories, totalPages, currentPage} })
     
-                res.status(200).send({ "success": 200, "message": "List of products under a subcategory", "data": {...productsUnderSubcategories, totalPages, currentPage} })
+                return res.status(200).send({ "success": 200, "message": "List of products under a subcategory", "data": {...productsUnderSubcategories, totalPages, currentPage} })
             }
             else {
                 const allProducts = await Product.findAndCountAll({
