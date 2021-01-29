@@ -318,11 +318,12 @@ const productsHome = async (req, res) => {
             limit: 4,
             include: {
                 model: Product,
-                order: ['createdAt', 'DESC'],
+                order: [['createdAt', 'DESC']],
                 limit: 10
             }
         })
-        const set = await setAsync('key', homeProducts)
+        console.log(JSON.stringify(homeProducts));
+        const set = await setAsync('key', JSON.stringify(homeProducts))
         log.info('Outgoin response from productsHome', { "respone": homeProducts })
         res.status(200).send({ "success": 200, "message": "Home page content", "data": homeProducts })
     }

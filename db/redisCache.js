@@ -10,8 +10,8 @@ client.on("error", function(error) {
     console.error(error);
 });
   
-  const setAsync = promisify(client.hmset).bind(client);
-  const getAsync = promisify(client.hgetall).bind(client);
+  const setAsync = promisify(client.set).bind(client);
+  const getAsync = promisify(client.get).bind(client);
   const del = promisify(client.del).bind(client);
   
   module.exports = {setAsync, getAsync, del}

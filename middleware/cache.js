@@ -16,7 +16,7 @@ const getCachedData = async(req,res,next) => {
 
             log.info('Outcoming response from getCachedData', {"response": response})
 
-            res.status(200).send({ "success": 200, "message": "cache hit", "data": response})
+            res.status(200).send({ "success": 200, "message": "cache hit", "data": JSON.parse(response)})
         }
     }
     catch(err){
