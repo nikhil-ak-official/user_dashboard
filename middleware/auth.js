@@ -17,12 +17,17 @@ const authenticateToken = async (req, res, next) => {
             let token
             if (req.query.action == "setPassword" || req.query.action == "resetPassword" || req.query.action =="login") {
                 log.info('Incoming request to auth by set password, reset password or login', {"request": req.query.action})
-
+                if(!req.query.token) {
+                    return res.status(400).send({"error": 401, "message" :"Please send token"})
+                }
                 token = req.query.token
                 decode = jwt.verify(token, process.env.RESET_TOKEN_SECRET_KEY)
             }
             else {
                 log.info('Incoming request to auth')
+                if(!req.headers['authorization']) {
+                    return res.status(400).send({"error": 401, "message" :"Please send token"})
+                }
                 token = req.headers['authorization'].split(' ')[1]
                 decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY)
             }
