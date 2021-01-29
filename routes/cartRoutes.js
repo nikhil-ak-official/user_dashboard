@@ -1,7 +1,7 @@
 const express = require('express')
 const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
-const {addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts} = require('../services/cartServices')
+const {addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts} = require('../services/cartServices')
 
 const { Sequelize } = require('sequelize')
 
