@@ -181,11 +181,15 @@ const getAllFromCart = async(req,res) => {
 const recommendedProducts = async(req,res) => {
     try {
         log.info('Incoming request to recommendedProducts')
-        const allCart = await Cart.findAll({
-            attributes: ['id', 'user_id'],            
+        const recommended = await Cart.findAll({
+            where: {
+                user_id: req.user.id
+            },
+            attributes: [],            
             include: {
                 model: Product,
-                attributes: ['id', 'name', 'category_id',
+                group: ['category_id'],
+                attributes: ['id', 'name', 'category_id','subcategory_id',
             [Sequelize.literal('(RANK() OVER (ORDER BY Products.category_id DESC))'), 'rank']],
 
                 through: {
@@ -195,37 +199,28 @@ const recommendedProducts = async(req,res) => {
             }
         })
     
-        log.info('Outgoin response from recommendedProducts', {"response": allCart})
-        res.status(200).send({"success": 200, "message": "recommended products", "data": allCart})
+        log.info('Outgoin response from recommendedProducts', {"response": recommended})
+        res.status(200).send({"success": 200, "message": "recommended products", "data": recommended})
     }
     catch(err){
-    log.error('Error accesssing recommendedProductsProducts', {"error":  err.message})
+    log.error('Error accesssing trendingProducts', {"error":  err.message})
     res.status(400).send({"error": 400, "message": err.message })
     }
 }
 
 const trendingProducts = async(req,res) => {
     try {
-        log.info('Incoming request to recommendedProducts')
-        const allCart = await Cart.findAll({
-            attributes: ['id', 'user_id'],            
-            include: {
-                model: Product,
-                attributes: ['id', 'name', 'category_id',
-            [Sequelize.literal('(RANK() OVER (ORDER BY Products.category_id DESC))'), 'rank']],
-
-                through: {
-                    attributes: ['product_quantity']
-                }
-                
-            }
+        log.info('Incoming request to trendingProducts')
+        const trending = await ProductsCart.findAll({
+            group: ['product_id'],
+            attributes: ['product_id',[Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']]
         })
     
-        log.info('Outgoin response from recommendedProducts', {"response": allCart})
-        res.status(200).send({"success": 200, "message": "recommended products", "data": allCart})
+        log.info('Outgoin response from trendingProducts', {"response": trending})
+        res.status(200).send({"success": 200, "message": "trending products", "data": trending})
     }
     catch(err){
-    log.error('Error accesssing recommendedProductsProducts', {"error":  err.message})
+    log.error('Error accesssing trendingProducts', {"error":  err.message})
     res.status(400).send({"error": 400, "message": err.message })
     }
 }

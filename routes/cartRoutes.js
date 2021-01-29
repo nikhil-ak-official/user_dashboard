@@ -20,7 +20,7 @@ router.put('/:id', authenticateToken, authorized(['user']), editFromCart)
 router.get('/', authenticateToken, authorized(['user']), getAllFromCart)
 
 // recommended products
-router.get('/recommended', authenticateToken, authorized(['admin']), recommendedProducts)
+router.get('/recommended', authenticateToken, authorized(['user']), recommendedProducts)
 
 // trending products
 router.get('/trending', authenticateToken, authorized(['admin']), trendingProducts)

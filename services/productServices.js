@@ -5,7 +5,6 @@ const log = require('../logs/logger')
 const Product = require('../models/product')
 const fs = require('fs')
 const { Op, Sequelize } = require('sequelize')
-const Logger = require('bunyan')
 const Cart = require('../models/cart')
 const ProductsCart = require('../models/productscart')
 
