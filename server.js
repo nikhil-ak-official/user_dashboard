@@ -24,6 +24,7 @@ app.use(express.json())
 
 // const getAsync = promisify(client.hgetall).bind(client);
 // const setAsync = promisify(client.hmset).bind(client);
+// const del = promisify(client.del).bind(client);
 
 // (async() => {
 //   try {
@@ -32,11 +33,16 @@ app.use(express.json())
 //     });
 //     const data = await getAsync('key')
 //     console.log(data);
+//     await del('key');
+//     const newData = await getAsync('key')
+//     console.log(newData);
+
+
 //   }
 //   catch(err) {
 //     console.log(err);
 //   }
-// })()
+// })();
 
 
 

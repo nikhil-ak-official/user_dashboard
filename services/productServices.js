@@ -220,7 +220,7 @@ const getProducts = async (req, res) => {
     
                     },
                     limit: parseInt(req.query.range),
-                    offset: parseInt(req.query.range) * req.query.page,
+                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * req.query.page: null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
                 })
                 const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, allProducts.count)
@@ -238,7 +238,7 @@ const getProducts = async (req, res) => {
                         }
                     },
                     limit: parseInt(req.query.range),
-                    offset: parseInt(req.query.range) * req.query.page,
+                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * req.query.page: null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
     
     
@@ -283,7 +283,7 @@ const getProducts = async (req, res) => {
                     }
                 ],
                     limit: parseInt(req.query.range),
-                    offset: parseInt(req.query.range) * req.query.page,
+                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * req.query.page: null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
     
     
@@ -315,6 +315,7 @@ const productsHome = async (req, res) => {
                 limit: 10
             }
         })
+        await setAsync('key', homeProducts)
         log.info('Outgoin response from productsHome', { "respone": homeProducts })
         res.status(200).send({ "success": 200, "message": "Home page content", "data": homeProducts })
     }
@@ -345,28 +346,6 @@ const countProducts = async(req,res) => {
     }
 }
 
-const trendingProducts = async(req,res) => {
-    try{
-        log.info('Incoming request to trendingProducts')
-        const ranking = await ProductsCart.findAll({
-            group: ['cart_id']
-        })
-        log.info('Outgoin response from trendingProducts', {"response": ranking})
-
-        res.status(200).send({"success": 200, "message": "", "data": ranking})
-
-    }
-    catch(err) {
-        log.error('Error accesssing trending Products', {"error": err})
-        if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
-        }
-        else{
-            res.status(400).send({"error": 400, "message": err.message })
-
-        } 
-    }
-}
 
 // pagination function
 const getPagination = (page, limit, totalProducts) => {

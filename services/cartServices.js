@@ -4,6 +4,7 @@ const log = require('../logs/logger')
 const Product = require('../models/product')
 const Cart = require('../models/cart')
 const ProductsCart = require('../models/productscart')
+const { Sequelize } = require('sequelize')
 
 
 
@@ -152,7 +153,7 @@ const editFromCart = async(req,res) => {
 
 const getAllFromCart = async(req,res) => {
     try{
-        log.info('Incoming request to getAllCartProducts')
+        log.info('Incoming request to getAllFromCart')
 
         const allCart = await Cart.findAll({
             where: {
@@ -167,14 +168,66 @@ const getAllFromCart = async(req,res) => {
             }
         })
 
-        log.info('Outgoin response from getAllCartProducts', {"response": allCart})
+        log.info('Outgoin response from getAllFromCart', {"response": allCart})
         res.status(200).send({"success": 200, "message": "List all products from cart successfully", "data": allCart})
 
     }
     catch(err){
-        log.error('Error accesssing getAllCartProducts', {"error":  err.message})
+        log.error('Error accesssing getAllFromCart', {"error":  err.message})
         res.status(400).send({"error": 400, "message": err.message })
     }
 }
 
-module.exports = {addToCart, removeFromCart, editFromCart, getAllFromCart}
+const recommendedProducts = async(req,res) => {
+    try {
+        log.info('Incoming request to recommendedProducts')
+        const allCart = await Cart.findAll({
+            attributes: ['id', 'user_id'],            
+            include: {
+                model: Product,
+                attributes: ['id', 'name', 'category_id',
+            [Sequelize.literal('(RANK() OVER (ORDER BY Products.category_id DESC))'), 'rank']],
+
+                through: {
+                    attributes: ['product_quantity']
+                }
+                
+            }
+        })
+    
+        log.info('Outgoin response from recommendedProducts', {"response": allCart})
+        res.status(200).send({"success": 200, "message": "recommended products", "data": allCart})
+    }
+    catch(err){
+    log.error('Error accesssing recommendedProductsProducts', {"error":  err.message})
+    res.status(400).send({"error": 400, "message": err.message })
+    }
+}
+
+const trendingProducts = async(req,res) => {
+    try {
+        log.info('Incoming request to recommendedProducts')
+        const allCart = await Cart.findAll({
+            attributes: ['id', 'user_id'],            
+            include: {
+                model: Product,
+                attributes: ['id', 'name', 'category_id',
+            [Sequelize.literal('(RANK() OVER (ORDER BY Products.category_id DESC))'), 'rank']],
+
+                through: {
+                    attributes: ['product_quantity']
+                }
+                
+            }
+        })
+    
+        log.info('Outgoin response from recommendedProducts', {"response": allCart})
+        res.status(200).send({"success": 200, "message": "recommended products", "data": allCart})
+    }
+    catch(err){
+    log.error('Error accesssing recommendedProductsProducts', {"error":  err.message})
+    res.status(400).send({"error": 400, "message": err.message })
+    }
+}
+
+module.exports = {addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts}
