@@ -8,6 +8,7 @@ const subcategoryRoutes = require('./routes/subcategoryRoutes')
 const productRoutes = require('./routes/productRoutes')
 const cartRoutes = require('./routes/cartRoutes')
 
+
 const app = express()
 app.use(cors())
 app.use(express.json())

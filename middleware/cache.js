@@ -7,7 +7,7 @@ const log = require('../logs/logger')
 const getCachedData = async(req,res,next) => {
     try{
         log.info('Incoming request to getCachedData')
-        const response = await getAsync('key')
+        const response = await getAsync('subcategoriesKey')
 
         if(response == null)  {
             next()
@@ -20,6 +20,9 @@ const getCachedData = async(req,res,next) => {
         }
     }
     catch(err){
+        if(err instanceof RedisError) {
+            return res.status(400).send({ "error": 400, "message": err.message })
+        }
         log.error('Error accesssing getCachedData', { "error": err })
         res.status(400).send({ "error": 400, "message": err.message })
     }

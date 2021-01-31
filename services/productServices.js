@@ -8,8 +8,6 @@ const { Op, Sequelize } = require('sequelize')
 const Cart = require('../models/cart')
 const ProductsCart = require('../models/productscart')
 
-const clearCache = require('../services/clearCache')
-const {setAsync} = require('../db/redisCache')
 
 const createProduct = async (req, res) => {
     try {
@@ -19,7 +17,6 @@ const createProduct = async (req, res) => {
                 log.debug('get category id', req.categoryId)
                 log.debug('get category id', req.subcategoryId)
                 const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId, subcategory_id: req.subcategoryId })
-                const clear = clearCache('key')
                 log.info('Outgoin response from createProduct', { "respone": newProduct.dataValues })
                 res.status(201).send({ "success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues })
             }
@@ -36,7 +33,6 @@ const createProduct = async (req, res) => {
                 }
                 log.debug('get category id', req.categoryId)
                 const newProduct = await Product.create({ ...others, image: req.file.path, category_id: req.categoryId })
-                const clear = clearCache('key')
                 log.info('Outgoin response from createProduct', { "respone": newProduct.dataValues })
                 res.status(201).send({ "success": 201, "message": "Product added successfully by admin", "data": newProduct.dataValues })
             }
@@ -118,7 +114,6 @@ const editProduct = async (req, res) => {
                     id: req.params.id
                 }
             })
-            const clear = clearCache('key')
             log.info('Outgoin response from editProduct where subcategory exist', { "respone": editedProduct.dataValues })
             res.status(200).send({ "success": 200, "message": "Product edited successfully by admin", "data": editedProduct.dataValues })
         }
@@ -134,7 +129,6 @@ const editProduct = async (req, res) => {
                     id: req.params.id
                 }
             })
-            const clear = clearCache('key')
             log.info('Outgoin response from editProduct where subcategory exist', { "respone": editedProduct.dataValues })
             res.status(200).send({ "success": 200, "message": "Product edited successfully by admin", "data": editedProduct.dataValues })
         }
@@ -172,7 +166,6 @@ const removeProduct = async (req, res) => {
             fs.unlinkSync(product.image)
 
         }
-        const clear = clearCache('key')
         log.info('Outgoin response from deleteProduct', { "respone": "Product deleted successfully by admin" })
 
         res.status(200).send({ "success": 200, "message": "Product deleted successfully by admin" })
@@ -322,8 +315,6 @@ const productsHome = async (req, res) => {
                 limit: 10
             }
         })
-        console.log(JSON.stringify(homeProducts));
-        const set = await setAsync('key', JSON.stringify(homeProducts))
         log.info('Outgoin response from productsHome', { "respone": homeProducts })
         res.status(200).send({ "success": 200, "message": "Home page content", "data": homeProducts })
     }

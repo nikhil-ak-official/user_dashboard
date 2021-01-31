@@ -2,7 +2,6 @@ const express = require('express')
 const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
 const getCategoryId = require('../middleware/getCategoryId')
-const getCachedData = require('../middleware/cache')
 const log = require('../logs/logger')
 
 const {createProduct,editProduct,removeProduct,getProducts, productsHome,countProducts} = require('../services/productServices')
@@ -87,7 +86,7 @@ router.delete('/:id', authenticateToken, authorized(['admin']), removeProduct)
 
 router.get('/', authenticateToken, authorized(['admin', 'user']), getCategoryId,getProducts)
 
-router.get('/home', authenticateToken, authorized(['admin', 'user']),getCachedData, productsHome)
+router.get('/home', authenticateToken, authorized(['admin', 'user']), productsHome)
 
 router.get('/count', authenticateToken, authorized(['admin']), countProducts)
 

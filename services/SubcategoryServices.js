@@ -4,13 +4,17 @@ const Subcategory = require('..//models/subcategory')
 const log = require('../logs/logger')
 const Category = require('../models/category')
 const getCategoryId = require('../middleware/getCategoryId')
+const {setAsync} = require('../db/redisCache')
+const clearCache = require('../services/clearCache')
+
 
 const createSubcategory = async (req,res) => {
     try {
         log.info('Incoming request to createSubcategory', {"request": req.body})
         const ifProductsExist = await Product.findAll({
             where: {
-                category_id: req.categoryId
+                category_id: req.categoryId,
+                subcategory_id:null
             }
         })
         if(ifProductsExist.length != 0) {
@@ -21,7 +25,7 @@ const createSubcategory = async (req,res) => {
             name: req.body.name,
             category_id: req.categoryId,
         })
-
+        await clearCache('subcategoriesKey')
         log.info('Outgoin response from createSubcategory', {"response": req.categoryId})
         res.status(201).send({"success": 201, "message": "Subcategory added successfully by admin", "data": newSubcategory.dataValues})
     }
@@ -44,7 +48,9 @@ const editSubcategory = async (req,res) => {
         const {category, name} = req.body
         const ifProductsExist = await Product.findAll({
             where: {
-                category_id: req.categoryId
+                category_id: req.categoryId,
+                subcategory_id:null
+
             }
         })
         if(ifProductsExist.length != 0) {
@@ -57,7 +63,7 @@ const editSubcategory = async (req,res) => {
             },
             individualHooks: true
         })
-
+        await clearCache('subcategoriesKey')
         log.info('Outgoin response from editSubcategory', {"response": updateSubcategory[1][0].dataValues})
 
         res.status(200).send({"success": 200, "message": "Subcategory edited successfully by admin", "data": updateSubcategory[1][0].dataValues})
@@ -84,7 +90,8 @@ const deleteSubcategory = async(req,res) => {
         })  
         if(removeSubcategory == 0) {
             return res.status(400).send({"error": 400, "message": 'id doesnt exist' })
-        }      
+        }  
+        await clearCache('subcategoriesKey')
         log.info('Outgoin response from deleteSubcategory', {"response": "Subcategory and products under it deleted successfully by admin"})
 
         res.status(200).send({"success": 200, "message": "Subcategory and products under it deleted successfully by admin"})
@@ -106,13 +113,13 @@ const listOfSubs = async(req,res) => {
         log.info('Incoming request to getListOfSubcategory')
 
         const listAll = await Category.findAll({
-            order: [['createdAt', 'DESC' ], [Subcategory, 'createdAt', 'DESC' ]],
+            order: [['createdAt', 'DESC' ],[Subcategory, 'createdAt', 'DESC' ]],
             include: {
-                model: Subcategory,
+                model: Subcategory
             }
         })
-        log.info('Outgoin response from getListOfSubcategory', {"response": listAll.dataValues})
-
+        await setAsync('subcategoriesKey', JSON.stringify(listAll))
+        log.info('Outgoin response from getListOfSubcategory', {"response": listAll})
         res.status(200).send({"success": 200, "message": "list of subcategories under each categories listed successfully","data": listAll})
     }
     catch(err) {

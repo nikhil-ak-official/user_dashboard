@@ -7,6 +7,7 @@ const createCategory = async (req,res) => {
     try {
         log.info('Incoming request to createCategory', {"request": req.body})
         const newCategory = await Category.create(req.body)
+        await clearCache('subcategoriesKey')
         log.info('Outgoin response from createCategory', {"response": newCategory.dataValues})
         res.status(201).send({"success": 201, "message": "Category added successfully by admin", "data": newCategory.dataValues})
     }
@@ -32,9 +33,8 @@ const editCategory = async (req,res) => {
             },
             individualHooks: true
         })
-
+        await clearCache('subcategoriesKey')
         log.info('Outgoin response from editCategory', {"response": updateCategory[1][0].dataValues})
-
         res.status(200).send({"success": 200, "message": "Category edited successfully by admin", "data": updateCategory[1][0].dataValues})
     }
     catch(err) {
@@ -61,6 +61,7 @@ const deleteCategory = async(req,res) => {
         if(removeCategory == 0) {
             return res.status(400).send({"error": 400, "message": 'id doesnt exist' })
         }
+        await clearCache('subcategoriesKey')
         log.info('Outgoin response from deleteCategory', {"response": "Category and all subcategories under it deleted successfully by admin"})
 
         res.status(200).send({"success": 200, "message": "Categoryand all subcategories under it deleted successfully by admin"})

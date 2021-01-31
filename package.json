@@ -10,7 +10,6 @@
     "prod": "env-cmd -f ./config/.env nodemon server.js",
     "undo_migration": "env-cmd -f ./config/.env npx sequelize-cli db:seed:undo:all --env production && env-cmd -f ./config/.env npx sequelize-cli db:migrate:undo:all --env production ",
     "undo_migration_dev": "env-cmd -f ./config/.env npx sequelize-cli db:seed:undo:all && env-cmd -f ./config/.env npx sequelize-cli db:migrate:undo:all ",
-    
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
