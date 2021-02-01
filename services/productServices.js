@@ -219,7 +219,7 @@ const getProducts = async (req, res) => {
     
                     },
                     limit: parseInt(req.query.range),
-                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * req.query.page: null,
+                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * (parseInt(req.query.page)-1): null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
                 })
                 const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, productsUnderCategories.count)
@@ -237,10 +237,8 @@ const getProducts = async (req, res) => {
                         }
                     },
                     limit: parseInt(req.query.range),
-                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * req.query.page: null,
+                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * (parseInt(req.query.page)-1): null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
-    
-    
                 })
                 const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, productsUnderSubcategories.count)
                 log.info('Outgoin response from getProducts', { "respone": {...productsUnderSubcategories, totalPages, currentPage} })
@@ -282,7 +280,7 @@ const getProducts = async (req, res) => {
                     }
                 ],
                     limit: parseInt(req.query.range),
-                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * req.query.page: null,
+                    offset: parseInt(req.query.page)>1?parseInt(req.query.range) * (parseInt(req.query.page)-1): null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
     
     

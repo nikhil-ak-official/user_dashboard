@@ -185,15 +185,13 @@ const recommendedProducts = async(req,res) => {
             where: {
                 user_id: req.user.id
             },
-            attributes: [],            
+            attributes:[],
             include: {
                 model: Product,
-                group: ['category_id'],
-                attributes: ['id', 'name', 'category_id','subcategory_id',
-            [Sequelize.literal('(RANK() OVER (ORDER BY Products.category_id DESC))'), 'rank']],
-
                 through: {
-                    attributes: ['product_quantity']
+                    attributes: ['product_quantity',
+                    [Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']
+                ]
                 }
                 
             }
@@ -203,7 +201,7 @@ const recommendedProducts = async(req,res) => {
         res.status(200).send({"success": 200, "message": "recommended products", "data": recommended})
     }
     catch(err){
-    log.error('Error accesssing trendingProducts', {"error":  err.message})
+    log.error('Error accesssing recommendedProducts', {"error":  err.message})
     res.status(400).send({"error": 400, "message": err.message })
     }
 }
@@ -212,8 +210,11 @@ const trendingProducts = async(req,res) => {
     try {
         log.info('Incoming request to trendingProducts')
         const trending = await ProductsCart.findAll({
-            group: ['product_id'],
-            attributes: ['product_id',[Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']]
+            group: ['product_id'],            
+            attributes: ['product_id',
+            [Sequelize.literal('(COUNT(*))'), 'users_count'],
+            [Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']],
+
         })
     
         log.info('Outgoin response from trendingProducts', {"response": trending})
@@ -224,5 +225,6 @@ const trendingProducts = async(req,res) => {
     res.status(400).send({"error": 400, "message": err.message })
     }
 }
+
 
 module.exports = {addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts}
