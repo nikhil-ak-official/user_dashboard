@@ -2,6 +2,7 @@ const mysqlConnection = require('../db/db')
 const {Sequelize} = require('sequelize')
 const Category = require('./category')
 const Subcategory = require('./subcategory')
+const fs = require('fs')
 
 
 const Product = mysqlConnection.define('Products', {
@@ -96,6 +97,7 @@ Product.beforeCreate(async (product,options)=>{
   checkName.forEach(e => {
     let name = e.dataValues.name
     if(name.replace('/\s+/g','').trim().toLowerCase() == product.name.replace('/\s+/g','').trim().toLowerCase()) {
+      fs.unlinkSync(product.image)
       throw new Error('product name already exist')
     }
   })
@@ -106,6 +108,7 @@ Product.beforeUpdate(async (product,options)=>{
   checkName.forEach(e => {
     let name = e.dataValues.name
     if(name.replace('/\s+/g','').trim().toLowerCase() == product.name.replace('/\s+/g','').trim().toLowerCase()) {
+      fs.unlinkSync(product.image)
       throw new Error('product name already exist')
     }
   })

@@ -2,6 +2,7 @@ const express = require('express')
 const log = require('../logs/logger')
 const Category = require('../models/category')
 const Subcategory = require('../models/subcategory')
+const fs = require('fs')
 
 
 const getCategoryId = async(req,res,next) => {
@@ -26,6 +27,7 @@ const getCategoryId = async(req,res,next) => {
     }
     catch(err) {
         log.error('Error response from getCategoryId', {"error": "unauthorized role"})
+        fs.unlinkSync(req.file.path)
         res.status(404).send({"error":404, "message":"category or subcategory doesnt exist"})
     }
    
