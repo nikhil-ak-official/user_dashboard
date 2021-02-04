@@ -4,7 +4,7 @@ const Subcategory = require('..//models/subcategory')
 const log = require('../logs/logger')
 const Category = require('../models/category')
 const getCategoryId = require('../middleware/getCategoryId')
-const {setAsync} = require('../db/redisCache')
+const client = require('../db/redisCache')
 const clearCache = require('../services/clearCache')
 
 
@@ -118,7 +118,7 @@ const listOfSubs = async(req,res) => {
                 model: Subcategory
             }
         })
-        await setAsync('subcategoriesKey', JSON.stringify(listAll))
+        await client.setAsync('subcategoriesKey', JSON.stringify(listAll))
         log.info('Outgoin response from getListOfSubcategory', {"response": listAll})
         res.status(200).send({"success": 200, "message": "list of subcategories under each categories listed successfully","data": listAll})
     }

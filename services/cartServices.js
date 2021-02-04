@@ -5,20 +5,19 @@ const Product = require('../models/product')
 const Cart = require('../models/cart')
 const ProductsCart = require('../models/productscart')
 const { Sequelize } = require('sequelize')
+const raccoon = require('raccoon')
 
-
-
-const addToCart = async(req,res) => {
-    try{
-        log.info('Incoming request to addtocart', {"request": req.body})
+const addToCart = async (req, res) => {
+    try {
+        log.info('Incoming request to addtocart', { "request": req.body })
         const getProductDetails = await Product.findOne({
             where: {
                 name: req.body.productName
             }
         })
-        if(getProductDetails && req.body.productQuantity) {
-            if(getProductDetails.quantity < req.body.productQuantity) {
-                return res.status(400).send({"error": 400, "message": "quantity should be less than available quantity"})
+        if (getProductDetails && req.body.productQuantity) {
+            if (getProductDetails.quantity < req.body.productQuantity) {
+                return res.status(400).send({ "error": 400, "message": "quantity should be less than available quantity" })
             }
             const cartId = await Cart.findAll(
                 {
@@ -28,13 +27,16 @@ const addToCart = async(req,res) => {
                 }
             )
             let mapToProduct
-            if(cartId.length == 0) {
-                const addCart = await Cart.create({user_id: req.user.id})
+            if (cartId.length == 0) {
+                const addCart = await Cart.create({ user_id: req.user.id })
                 mapToProduct = await ProductsCart.create({
                     product_id: getProductDetails.id,
                     cart_id: addCart.dataValues.id,
                     product_quantity: req.body.productQuantity
                 })
+                await raccoon.liked(req.user.id, getProductDetails.id)
+                log.info('Outgoin response from addtocart', { "response": mapToProduct.dataValues })
+                res.status(201).send({ "success": 201, "message": "Added product to cart successfully", "data": mapToProduct.dataValues })
 
             }
             else {
@@ -46,81 +48,124 @@ const addToCart = async(req,res) => {
                     },
                     individualHooks: true
                 })
-                mapToProduct = await ProductsCart.create({
-                    product_id: getProductDetails.id,
-                    cart_id: updateCart[1][0].dataValues.id,
-                    product_quantity: req.body.productQuantity
+                const ifProductExist = await ProductsCart.findAll({
+                    where: {
+                        cart_id: updateCart[1][0].dataValues.id,
+                        product_id: getProductDetails.id
+                    }
                 })
+                if (ifProductExist.length != 0) {
+                    if (ifProductExist[0].product_quantity + parseInt(req.body.productQuantity) > getProductDetails.quantity) {
+                        return res.status(400).send({ "error": 400, "message": "quantity should be less than available quantity" })
+
+                    }
+                    const updateProductInCart = await ProductsCart.update({
+                        product_quantity: ifProductExist[0].product_quantity + parseInt(req.body.productQuantity)
+
+                    }, {
+                        where: {
+                            cart_id: updateCart[1][0].dataValues.id,
+                            product_id: getProductDetails.id
+                        },
+                        individualHooks: true
+
+                    })
+
+                    log.info('Outgoin response from addtocart', { "response": updateProductInCart[1][0].dataValues })
+                    res.status(201).send({ "success": 201, "message": "Added product to cart successfully", "data": updateProductInCart[1][0].dataValues })
+                }
+                else {
+                    mapToProduct = await ProductsCart.create({
+                        product_id: getProductDetails.id,
+                        cart_id: updateCart[1][0].dataValues.id,
+                        product_quantity: req.body.productQuantity
+                    })
+                    await raccoon.liked(req.user.id, getProductDetails.id)
+                    log.info('Outgoin response from addtocart', { "response": mapToProduct.dataValues })
+                    res.status(201).send({ "success": 201, "message": "Added product to cart successfully", "data": mapToProduct.dataValues })
+                }
+
             }
-           
-            log.info('Outgoin response from addtocart', {"response": mapToProduct.dataValues})
-            res.status(201).send({"success": 201, "message": "Added product to cart successfully", "data": mapToProduct.dataValues})
-        } 
+
+        }
         else {
-            log.error('Error response from addtocart', {"error": req.categoryId})
-            res.status(400).send({"error": 400, "message": "product doesnt exist"})
+            log.error('Error response from addtocart', { "error": req.categoryId })
+            res.status(400).send({ "error": 400, "message": "product doesnt exist" })
         }
     }
-    catch(err){
-        log.error('Error accesssing add to cart', {"error":  err.message})
-        if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+    catch (err) {
+        log.error('Error accesssing add to cart', { "error": err.message })
+        if (err.errors) {
+            res.status(400).send({ "error": 400, "message": err.errors[0].message })
         }
-        else{
-            res.status(400).send({"error": 400, "message": err.message })
+        else {
+            res.status(400).send({ "error": 400, "message": err.message })
 
         }
     }
 
 }
 
-const removeFromCart = async(req,res)=> {
-    try{
+const removeFromCart = async (req, res) => {
+    try {
         log.info('Incoming request to removefromcart')
 
         const cartId = await Cart.findOne({
             where: {
-                user_id:req.user.id
+                user_id: req.user.id
+            },
+            include: {
+                model: ProductsCart,
+                attributes: ['product_id']
             }
         })
-        if(req.params.id) {
-            
+        if (req.params.id) {
+
             const removeProduct = await ProductsCart.destroy({
                 where: {
                     product_id: req.params.id,
                     cart_id: cartId.id
                 }
             })
-            log.info('Outgoin response from removefromcart', {"response": "Product removed from cart successfully"})
-            res.status(200).send({"success": 200, "message": "Product removed from cart successfully"})
+            if(!removeProduct) {
+                return res.status(400).send({ "error": 400, "message": 'id doesnt exist' })
+            }
+            await raccoon.unliked(req.user.id, req.params.id)
+
+            log.info('Outgoin response from removefromcart', { "response": "Product removed from cart successfully" })
+            res.status(200).send({ "success": 200, "message": "Product removed from cart successfully" })
 
         }
         else {
+            for(const i of cartId.ProductsCarts) {
+                await raccoon.unliked(req.user.id, i.product_id)
+            }
             const removeProduct = await ProductsCart.destroy({
                 where: {
                     cart_id: cartId.id
                 }
             })
-            log.info('Outgoin response from removefromcart', {"response":"All products removed from cart successfully"})
-            res.status(200).send({"success": 200, "message": "All products removed from cart successfully"})
+            
+            log.info('Outgoin response from removefromcart', { "response": "All products removed from cart successfully" })
+            res.status(200).send({ "success": 200, "message": "All products removed from cart successfully" })
         }
 
     }
-    catch(err) {
-        log.error('Error accesssing removefromcart', {"error":  err.message})
-        if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+    catch (err) {
+        log.error('Error accesssing removefromcart', { "error": err.message })
+        if (err.errors) {
+            res.status(400).send({ "error": 400, "message": err.errors[0].message })
         }
-        else{
-            res.status(400).send({"error": 400, "message": err.message })
+        else {
+            res.status(400).send({ "error": 400, "message": err.message })
 
-        } 
+        }
     }
 }
 
-const editFromCart = async(req,res) => {
-    try{
-        log.info('Incoming request to editCart', {"request": req.body})
+const editFromCart = async (req, res) => {
+    try {
+        log.info('Incoming request to editCart', { "request": req.body })
         const cartId = await Cart.findOne({
             where: {
                 user_id: req.user.id
@@ -128,31 +173,37 @@ const editFromCart = async(req,res) => {
         })
         const updateQuantity = await ProductsCart.update({
             product_quantity: req.body.quantity
-        },{
+        }, {
             where: {
-               cart_id: cartId.id,
-               product_id: req.params.id
+                cart_id: cartId.id,
+                product_id: req.params.id
             },
             individualHooks: true
         })
-        log.info('Outgoin response from editcart', {"response": updateQuantity[1][0].dataValues})
-        res.status(200).send({"success": 200, "message": "Edited product in cart successfully", "data": updateQuantity[1][0].dataValues})
+        // if(updateQuantity[1][0]._previousDataValues.product_quantity < req.body.quantity) {
+        //     raccoon.liked(req.user.id, req.params.id)
+        // }
+        // else {
+        //     raccoon.unliked(req.user.id, req.params.id)
+        // }
+        log.info('Outgoin response from editcart', { "response": updateQuantity[1][0].dataValues })
+        res.status(200).send({ "success": 200, "message": "Edited product in cart successfully", "data": updateQuantity[1][0].dataValues })
 
     }
-    catch(err){
-        log.error('Error accesssing editfromcart', {"error":  err.message})
-        if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+    catch (err) {
+        log.error('Error accesssing editfromcart', { "error": err.message })
+        if (err.errors) {
+            res.status(400).send({ "error": 400, "message": err.errors[0].message })
         }
-        else{
-            res.status(400).send({"error": 400, "message": err.message })
+        else {
+            res.status(400).send({ "error": 400, "message": err.message })
 
-        } 
+        }
     }
 }
 
-const getAllFromCart = async(req,res) => {
-    try{
+const getAllFromCart = async (req, res) => {
+    try {
         log.info('Incoming request to getAllFromCart')
 
         const allCart = await Cart.findAll({
@@ -164,67 +215,71 @@ const getAllFromCart = async(req,res) => {
                 through: {
                     attributes: ['product_quantity']
                 }
-                
+
             }
         })
-
-        log.info('Outgoin response from getAllFromCart', {"response": allCart})
-        res.status(200).send({"success": 200, "message": "List all products from cart successfully", "data": allCart})
-
+        log.info('Outgoin response from getAllFromCart', { "response": allCart })
+        res.status(200).send({ "s,uccess": 200, "message": "List all products from cart successfully", "data": allCart })
     }
-    catch(err){
-        log.error('Error accesssing getAllFromCart', {"error":  err.message})
-        res.status(400).send({"error": 400, "message": err.message })
+    catch (err) {
+        log.error('Error accesssing getAllFromCart', { "error": err.message })
+        res.status(400).send({ "error": 400, "message": err.message })
     }
 }
 
-const recommendedProducts = async(req,res) => {
+const recommendedProducts = async (req, res) => {
     try {
         log.info('Incoming request to recommendedProducts')
         const recommended = await Cart.findAll({
             where: {
                 user_id: req.user.id
             },
-            attributes:[],
+            attributes: [],
             include: {
-                model: Product,
-                through: {
-                    attributes: ['product_quantity',
-                    [Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']
-                ]
+                model: ProductsCart,
+                attributes: ['product_id', 'product_quantity',
+                    [Sequelize.literal('(RANK() OVER (ORDER BY ProductsCarts.product_quantity DESC))'), 'rank']],
+                include: {
+                    model: Product,
+                    attributes: ['category_id']
                 }
-                
+
             }
         })
-    
-        log.info('Outgoin response from recommendedProducts', {"response": recommended})
-        res.status(200).send({"success": 200, "message": "recommended products", "data": recommended})
+        log.info('Outgoin response from recommendedProducts', { "response": recommended })
+        res.status(200).send({ "success": 200, "message": "recommended products", "data": recommended })
     }
-    catch(err){
-    log.error('Error accesssing recommendedProducts', {"error":  err.message})
-    res.status(400).send({"error": 400, "message": err.message })
+    catch (err) {
+        log.error('Error accesssing recommendedProducts', { "error": err.message })
+        res.status(400).send({ "error": 400, "message": err.message })
     }
 }
 
-const trendingProducts = async(req,res) => {
+const trendingProducts = async (req, res) => {
     try {
         log.info('Incoming request to trendingProducts')
         const trending = await ProductsCart.findAll({
-            group: ['product_id'],            
+            include: {
+                model: Product,
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt']
+                },
+            },
+            group: ['product_id'],
             attributes: ['product_id',
-            [Sequelize.literal('(COUNT(*))'), 'users_count'],
-            [Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']],
+                [Sequelize.literal('(COUNT(*))'), 'users_count'],
+                [Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']],
 
         })
-    
-        log.info('Outgoin response from trendingProducts', {"response": trending})
-        res.status(200).send({"success": 200, "message": "trending products", "data": trending})
+
+        log.info('Outgoin response from trendingProducts', { "response": trending })
+        res.status(200).send({ "success": 200, "message": "trending products", "data": trending })
     }
-    catch(err){
-    log.error('Error accesssing trendingProducts', {"error":  err.message})
-    res.status(400).send({"error": 400, "message": err.message })
+    catch (err) {
+        log.error('Error accesssing trendingProducts', { "error": err.message })
+        res.status(400).send({ "error": 400, "message": err.message })
     }
 }
 
 
-module.exports = {addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts}
+module.exports = { addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts }

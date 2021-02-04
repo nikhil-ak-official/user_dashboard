@@ -7,6 +7,7 @@ const fs = require('fs')
 const { Op, Sequelize } = require('sequelize')
 const Cart = require('../models/cart')
 const ProductsCart = require('../models/productscart')
+const raccoon = require('raccoon')
 
 
 const createProduct = async (req, res) => {
@@ -222,6 +223,7 @@ const getProducts = async (req, res) => {
                     offset: parseInt(req.query.page)>1?parseInt(req.query.range) * (parseInt(req.query.page)-1): null,
                     order: req.query.property ? [[`${req.query.property}`, `${req.query.sort}`]] : [['createdAt', 'DESC' ]]
                 })
+
                 const {totalPages, currentPage} = getPagination(req.query.page,req.query.range, productsUnderCategories.count)
                 
                 log.info('Outgoin response from getProducts', { "respone": {...productsUnderCategories, totalPages, currentPage} })
@@ -313,8 +315,50 @@ const productsHome = async (req, res) => {
                 limit: 10
             }
         })
+        const recommendations = await raccoon.recommendFor(req.user.id,-1)
+        console.log(recommendations)
+        const trendingProductsWithoutScore = await raccoon.bestRated()
+        console.log(trendingProductsWithoutScore);
+        const trendingProductsWithScore = await raccoon.bestRatedWithScores(-1)
+        console.log(trendingProductsWithScore);
+        let userCount = {}
+        for(const i of trendingProductsWithoutScore) {
+            userCount[i] = await raccoon.likedCount(i)
+        }
+        console.log(userCount);
+        const likedByUser = await raccoon.allLikedFor(req.user.id)
+        console.log(likedByUser);
+        let recommendedProducts;
+        let trendingProducts;
+        if(recommendations.length == 0 && likedByUser.length>0) {
+           const categoriesId = await Product.findAll({
+               attributes:['category_id'],
+               where: {
+                   id: likedByUser
+               }
+            })
+            const categoryIdList = categoriesId.map(e => {return e.category_id})
+            recommendedProducts = await Product.findAll({
+                where: {
+                    category_id: categoryIdList,
+                    id: {
+                        [Op.notIn]: likedByUser
+                    }
+                }
+            })
+        }
+        else {
+            recommendedProducts = await Product.findAll({
+                id: recommendations
+            })
+        }
+        trendingProducts = await Product.findAll({
+            where: {
+                id: trendingProductsWithoutScore
+            }
+        })
         log.info('Outgoin response from productsHome', { "respone": homeProducts })
-        res.status(200).send({ "success": 200, "message": "Home page content", "data": homeProducts })
+        res.status(200).send({ "success": 200, "message": "Home page content", "data": {trendingProducts, recommendedProducts, homeProducts} })
     }
     catch (err) {
         log.error('Error accesssing productsHome', { "error": err })

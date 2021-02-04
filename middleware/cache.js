@@ -1,5 +1,5 @@
 const express = require('express')
-const {getAsync} = require('../db/redisCache')
+const client = require('../db/redisCache')
 
 const log = require('../logs/logger')
 
@@ -7,7 +7,7 @@ const log = require('../logs/logger')
 const getCachedData = async(req,res,next) => {
     try{
         log.info('Incoming request to getCachedData')
-        const response = await getAsync('subcategoriesKey')
+        const response = await client.getAsync('subcategoriesKey')
 
         if(response == null)  {
             next()

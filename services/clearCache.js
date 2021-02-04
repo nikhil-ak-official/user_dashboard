@@ -2,14 +2,14 @@
 const express = require('express')
 const log = require('../logs/logger')
 
-const {del} = require('../db/redisCache')
+const client = require('../db/redisCache')
 const { RedisError } = require('redis')
 
 
 const clearCache = async(key) => {
     try {
         log.info('Incoming request to clearCache', { "request": key})
-        await del(key)
+        await client.del(key)
         log.info('Outcoming response from clearCache', {"response": "deleted cached key"})
         return true
 

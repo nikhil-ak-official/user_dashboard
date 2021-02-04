@@ -27,12 +27,16 @@ const createCategory = async (req,res) => {
 const editCategory = async (req,res) => {
     try {
         log.info('Incoming request to editCategory', {"request": req.body})
-        const updateCategory = await Category.update(req.body, {
+        const updateCategory = await Category.update({
+            name: req.body.name
+        },
+        {
             where: {
                 id: req.params.id
             },
             individualHooks: true
         })
+        console.log(updateCategory[1][0].dataValues);
         await clearCache('subcategoriesKey')
         log.info('Outgoin response from editCategory', {"response": updateCategory[1][0].dataValues})
         res.status(200).send({"success": 200, "message": "Category edited successfully by admin", "data": updateCategory[1][0].dataValues})
@@ -42,8 +46,8 @@ const editCategory = async (req,res) => {
         if(err.errors) {
             res.status(400).send({"error": 400, "message":  err.errors[0].message})
         }
-        else{
-            res.status(400).send({"error": 400, "message": 'id doesnt exist' })
+        if(err) {
+            res.status(400).send({"error": 400, "message": err })
 
         }
     }
