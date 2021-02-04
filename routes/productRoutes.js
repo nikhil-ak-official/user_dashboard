@@ -38,7 +38,7 @@ limits: {
 
 
 // create product by admin
-router.post('/create', authenticateToken, authorized(['admin']), function(req,res,next) {
+router.post('/create', authenticateToken, authorized(['admin']),function(req,res,next) {
     
     upload(req, res, function(err) {
   
@@ -79,7 +79,7 @@ router.patch('/:id', authenticateToken, authorized(['admin']), function(req,res,
             next()
         }
     }
-    )}, getCategoryId ,editProduct)
+    )},  getCategoryId ,editProduct)
 
 // delete product
 router.delete('/:id', authenticateToken, authorized(['admin']), removeProduct)

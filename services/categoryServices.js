@@ -40,12 +40,14 @@ const editCategory = async (req,res) => {
     catch(err) {
         log.error('Error accesssing editCategory', {"error": 'id doesnt exist'})
         if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+            return res.status(400).send({"error": 400, "message":  err.errors[0].message})
         }
-        else{
-            res.status(400).send({"error": 400, "message": 'id doesnt exist' })
+        if(err.message == "category name already exist") {
+            return res.status(400).send({ "error": 400, "message": err.message })
 
         }
+        return res.status(400).send({ "error": 400, "message": "id doesnt exist" })
+        
     }
 
 }
