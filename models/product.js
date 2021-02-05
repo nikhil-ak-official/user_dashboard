@@ -18,7 +18,7 @@ const Product = mysqlConnection.define('Products', {
     allowNull: false,
     validate: {
       validator(value) {
-        const alpha = /^[a-zA-Z ]*$/;
+        const alpha = /^[ A-Za-z0-9_./#&]*$/        
         if(!value.match(alpha)) {
           throw new Error('Please enter valid product name')
         }

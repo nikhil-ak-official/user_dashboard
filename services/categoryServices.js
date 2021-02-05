@@ -1,6 +1,7 @@
 
 const Category = require('..//models/category')
 const log = require('../logs/logger')
+const clearCache = require('../services/clearCache')
 
 
 const createCategory = async (req,res) => {
