@@ -316,25 +316,22 @@ const productsHome = async (req, res) => {
             }
         })
         const recommendations = await raccoon.recommendFor(req.user.id,-1)
-        console.log(recommendations)
         const trendingProductsWithoutScore = await raccoon.bestRated()
-        console.log(trendingProductsWithoutScore);
         const trendingProductsWithScore = await raccoon.bestRatedWithScores(-1)
-        console.log(trendingProductsWithScore);
-        let userCount = {}
+        let trendingVsUser = [];
         for(const i of trendingProductsWithoutScore) {
-            userCount[i] = await raccoon.likedCount(i)
+            trendingVsUser.push({product_id : parseInt(i), user_count: await raccoon.likedCount(i)})
         }
-        console.log(userCount);
         const likedByUser = await raccoon.allLikedFor(req.user.id)
-        console.log(likedByUser);
         let recommendedProducts;
         let trendingProducts;
         if(recommendations.length == 0 && likedByUser.length>0) {
            const categoriesId = await Product.findAll({
                attributes:['category_id'],
                where: {
-                   id: likedByUser
+                   id: {
+                    [Op.in]: likedByUser
+                   }
                }
             })
             const categoryIdList = categoriesId.map(e => {return e.category_id})
@@ -344,21 +341,35 @@ const productsHome = async (req, res) => {
                     id: {
                         [Op.notIn]: likedByUser
                     }
-                }
+                },
+            limit:10
+
             })
         }
         else {
             recommendedProducts = await Product.findAll({
-                id: recommendations
+                where: {
+                    id: recommendations
+
+                },
+            limit:10
+
             })
         }
         trendingProducts = await Product.findAll({
             where: {
                 id: trendingProductsWithoutScore
-            }
+            },
+            limit:10
         })
+        const order = trendingProductsWithoutScore.map(e => parseInt(e))
+        function sortFunc(a, b) {
+            var sortingArr = order
+            return sortingArr.indexOf(a.id) - sortingArr.indexOf(b.id);
+        }
+        trendingProducts.sort(sortFunc);
         log.info('Outgoin response from productsHome', { "respone": homeProducts })
-        res.status(200).send({ "success": 200, "message": "Home page content", "data": {trendingProducts, recommendedProducts, homeProducts} })
+        res.status(200).send({ "success": 200, "message": "Home page content", "data": {trendingProducts, trendingVsUser, recommendedProducts, homeProducts} })
     }
     catch (err) {
         log.error('Error accesssing productsHome', { "error": err })

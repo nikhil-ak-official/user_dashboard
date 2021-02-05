@@ -180,12 +180,9 @@ const editFromCart = async (req, res) => {
             },
             individualHooks: true
         })
-        // if(updateQuantity[1][0]._previousDataValues.product_quantity < req.body.quantity) {
-        //     raccoon.liked(req.user.id, req.params.id)
-        // }
-        // else {
-        //     raccoon.unliked(req.user.id, req.params.id)
-        // }
+        if(req.body.quantity == 0) {
+            raccoon.unliked(req.user.id, req.params.id)
+        }
         log.info('Outgoin response from editcart', { "response": updateQuantity[1][0].dataValues })
         res.status(200).send({ "success": 200, "message": "Edited product in cart successfully", "data": updateQuantity[1][0].dataValues })
 
@@ -227,59 +224,59 @@ const getAllFromCart = async (req, res) => {
     }
 }
 
-const recommendedProducts = async (req, res) => {
-    try {
-        log.info('Incoming request to recommendedProducts')
-        const recommended = await Cart.findAll({
-            where: {
-                user_id: req.user.id
-            },
-            attributes: [],
-            include: {
-                model: ProductsCart,
-                attributes: ['product_id', 'product_quantity',
-                    [Sequelize.literal('(RANK() OVER (ORDER BY ProductsCarts.product_quantity DESC))'), 'rank']],
-                include: {
-                    model: Product,
-                    attributes: ['category_id']
-                }
+// const recommendedProducts = async (req, res) => {
+//     try {
+//         log.info('Incoming request to recommendedProducts')
+//         const recommended = await Cart.findAll({
+//             where: {
+//                 user_id: req.user.id
+//             },
+//             attributes: [],
+//             include: {
+//                 model: ProductsCart,
+//                 attributes: ['product_id', 'product_quantity',
+//                     [Sequelize.literal('(RANK() OVER (ORDER BY ProductsCarts.product_quantity DESC))'), 'rank']],
+//                 include: {
+//                     model: Product,
+//                     attributes: ['category_id']
+//                 }
 
-            }
-        })
-        log.info('Outgoin response from recommendedProducts', { "response": recommended })
-        res.status(200).send({ "success": 200, "message": "recommended products", "data": recommended })
-    }
-    catch (err) {
-        log.error('Error accesssing recommendedProducts', { "error": err.message })
-        res.status(400).send({ "error": 400, "message": err.message })
-    }
-}
+//             }
+//         })
+//         log.info('Outgoin response from recommendedProducts', { "response": recommended })
+//         res.status(200).send({ "success": 200, "message": "recommended products", "data": recommended })
+//     }
+//     catch (err) {
+//         log.error('Error accesssing recommendedProducts', { "error": err.message })
+//         res.status(400).send({ "error": 400, "message": err.message })
+//     }
+// }
 
-const trendingProducts = async (req, res) => {
-    try {
-        log.info('Incoming request to trendingProducts')
-        const trending = await ProductsCart.findAll({
-            include: {
-                model: Product,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt']
-                },
-            },
-            group: ['product_id'],
-            attributes: ['product_id',
-                [Sequelize.literal('(COUNT(*))'), 'users_count'],
-                [Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']],
+// const trendingProducts = async (req, res) => {
+//     try {
+//         log.info('Incoming request to trendingProducts')
+//         const trending = await ProductsCart.findAll({
+//             include: {
+//                 model: Product,
+//                 attributes: {
+//                     exclude: ['id', 'createdAt', 'updatedAt']
+//                 },
+//             },
+//             group: ['product_id'],
+//             attributes: ['product_id',
+//                 [Sequelize.literal('(COUNT(*))'), 'users_count'],
+//                 [Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']],
 
-        })
+//         })
 
-        log.info('Outgoin response from trendingProducts', { "response": trending })
-        res.status(200).send({ "success": 200, "message": "trending products", "data": trending })
-    }
-    catch (err) {
-        log.error('Error accesssing trendingProducts', { "error": err.message })
-        res.status(400).send({ "error": 400, "message": err.message })
-    }
-}
+//         log.info('Outgoin response from trendingProducts', { "response": trending })
+//         res.status(200).send({ "success": 200, "message": "trending products", "data": trending })
+//     }
+//     catch (err) {
+//         log.error('Error accesssing trendingProducts', { "error": err.message })
+//         res.status(400).send({ "error": 400, "message": err.message })
+//     }
+// }
 
 
-module.exports = { addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts }
+module.exports = { addToCart, removeFromCart, editFromCart, getAllFromCart}

@@ -30,7 +30,6 @@ const getCategoryId = async(req,res,next) => {
         fs.unlinkSync(req.file.path)
         res.status(404).send({"error":404, "message":"category or subcategory doesnt exist"})
     }
-   
     
 }
 

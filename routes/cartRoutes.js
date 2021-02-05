@@ -1,7 +1,7 @@
 const express = require('express')
 const authenticateToken = require('../middleware/auth')
 const authorized = require('../middleware/admin')
-const {addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts} = require('../services/cartServices')
+const {addToCart, removeFromCart, editFromCart, getAllFromCart} = require('../services/cartServices')
 
 const { Sequelize } = require('sequelize')
 
@@ -19,11 +19,11 @@ router.put('/:id', authenticateToken, authorized(['user']), editFromCart)
 // get products in cart
 router.get('/', authenticateToken, authorized(['user']), getAllFromCart)
 
-// recommended products
-router.get('/recommended', authenticateToken, authorized(['user']), recommendedProducts)
+// // recommended products
+// router.get('/recommended', authenticateToken, authorized(['user']), recommendedProducts)
 
-// trending products
-router.get('/trending', authenticateToken, authorized(['admin']), trendingProducts)
+// // trending products
+// router.get('/trending', authenticateToken, authorized(['admin']), trendingProducts)
 
 
 
