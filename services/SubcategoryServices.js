@@ -10,7 +10,8 @@ const createSubcategory = async (req,res) => {
         log.info('Incoming request to createSubcategory', {"request": req.body})
         const ifProductsExist = await Product.findAll({
             where: {
-                category_id: req.categoryId
+                category_id: req.categoryId,
+                subcategory_id: null
             }
         })
         if(ifProductsExist.length != 0) {
@@ -44,7 +45,8 @@ const editSubcategory = async (req,res) => {
         const {category, name} = req.body
         const ifProductsExist = await Product.findAll({
             where: {
-                category_id: req.categoryId
+                category_id: req.categoryId,
+                subcategory_id: null
             }
         })
         if(ifProductsExist.length != 0) {
