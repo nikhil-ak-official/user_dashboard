@@ -27,7 +27,10 @@ const getCategoryId = async(req,res,next) => {
     }
     catch(err) {
         log.error('Error response from getCategoryId', {"error": "unauthorized role"})
-        fs.unlinkSync(req.file.path)
+        if(req.file) {
+            fs.unlinkSync(req.file.path)
+
+        }
         res.status(404).send({"error":404, "message":"category or subcategory doesnt exist"})
     }
     
