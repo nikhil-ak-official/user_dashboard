@@ -116,3 +116,25 @@ $20
 user_product:2:liked
 $1
 6
+*2
+$6
+SELECT
+$1
+0
+*2
+$3
+del
+$16
+subcategoriesKey
+*3
+$3
+set
+$16
+subcategoriesKey
+$2923
+[{"id":5,"name":"gym equipments","createdAt":"2021-02-05T11:25:29.000Z","updatedAt":"2021-02-05T12:35:56.000Z","Subcategories":[]},{"id":4,"name":"healthcare","createdAt":"2021-02-05T11:23:58.000Z","updatedAt":"2021-02-05T11:23:58.000Z","Subcategories":[]},{"id":3,"name":"electronics equipments","createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z","Subcategories":[{"id":19,"name":"speakers","category_id":3,"createdAt":"2021-02-05T11:13:16.000Z","updatedAt":"2021-02-05T11:13:16.000Z"},{"id":16,"name":"earphones","category_id":3,"createdAt":"2021-02-05T10:59:25.000Z","updatedAt":"2021-02-05T10:59:25.000Z"},{"id":3,"name":"TV","category_id":3,"createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z"},{"id":6,"name":"Mobiles","category_id":3,"createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z"}]},{"id":1,"name":"clothing","createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z","Subcategories":[{"id":18,"name":"saree","category_id":1,"createdAt":"2021-02-05T11:09:38.000Z","updatedAt":"2021-02-05T11:09:38.000Z"},{"id":17,"name":"kurthi","category_id":1,"createdAt":"2021-02-05T11:00:38.000Z","updatedAt":"2021-02-05T11:00:38.000Z"},{"id":14,"name":"boxer","category_id":1,"createdAt":"2021-01-31T13:04:11.000Z","updatedAt":"2021-01-31T13:04:11.000Z"},{"id":13,"name":"traditional wear","category_id":1,"createdAt":"2021-01-30T05:44:22.000Z","updatedAt":"2021-01-30T05:44:22.000Z"},{"id":12,"name":"boxers","category_id":1,"createdAt":"2021-01-30T05:43:41.000Z","updatedAt":"2021-01-30T05:43:41.000Z"},{"id":11,"name":"trousers","category_id":1,"createdAt":"2021-01-30T05:42:38.000Z","updatedAt":"2021-01-30T05:42:38.000Z"},{"id":10,"name":"pants","category_id":1,"createdAt":"2021-01-30T05:40:59.000Z","updatedAt":"2021-01-30T05:40:59.000Z"},{"id":9,"name":"jeans","category_id":1,"createdAt":"2021-01-30T05:31:55.000Z","updatedAt":"2021-01-30T05:31:55.000Z"},{"id":1,"name":"Tshirts","category_id":1,"createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z"},{"id":4,"name":"Shirts","category_id":1,"createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z"}]},{"id":2,"name":"footwears","createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-02-09T18:21:58.000Z","Subcategories":[{"id":15,"name":"sandals","category_id":2,"createdAt":"2021-02-02T13:47:27.000Z","updatedAt":"2021-02-02T13:47:27.000Z"},{"id":8,"name":"boot","category_id":2,"createdAt":"2021-01-30T05:29:24.000Z","updatedAt":"2021-01-30T05:29:24.000Z"},{"id":7,"name":"casuals","category_id":2,"createdAt":"2021-01-30T05:28:27.000Z","updatedAt":"2021-01-30T05:47:52.000Z"},{"id":2,"name":"Shoes","category_id":2,"createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z"},{"id":5,"name":"Sliders","category_id":2,"createdAt":"2021-01-29T08:00:05.000Z","updatedAt":"2021-01-29T08:00:05.000Z"}]}]
+*2
+$3
+del
+$16
+subcategoriesKey

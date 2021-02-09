@@ -17,10 +17,12 @@ const createCategory = async (req,res) => {
         if(err.errors) {
             res.status(400).send({"error": 400, "message":  err.errors[0].message})
         }
-        else{
-            res.status(400).send({"error": 400, "message": err.message })
+        if(err.message == "category name already exist") {
+            return res.status(400).send({ "error": 400, "message": err.message })
 
         }
+        return res.status(400).send({"error": 400, "message": err.message })
+
     }
 
 }

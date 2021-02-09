@@ -15,6 +15,7 @@ const getCategoryId = async(req,res,next) => {
             })
             req.categoryId = categoryId.id
         }
+
         if(req.query.subcategory || req.body.subcategory){
             const subcategoryId = await Subcategory.findOne({
                 where: {
@@ -26,7 +27,7 @@ const getCategoryId = async(req,res,next) => {
         next()
     }
     catch(err) {
-        log.error('Error response from getCategoryId', {"error": "unauthorized role"})
+        log.error('Error response from getCategoryId', {"error": "category or subcategory doesnt exist"})
         if(req.file) {
             fs.unlinkSync(req.file.path)
 

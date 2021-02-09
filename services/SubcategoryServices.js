@@ -32,12 +32,13 @@ const createSubcategory = async (req,res) => {
     catch(err) {
         log.error('Error accesssing subcategory', {"error":  err.message})
         if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+            return res.status(400).send({"error": 400, "message":  err.errors[0].message})
         }
-        else{
-            res.status(400).send({"error": 400, "message": err.message })
+        if(err.message == "subcategory name already exist") {
+            return res.status(400).send({ "error": 400, "message": err.message })
 
         }
+        return res.status(400).send({ "error": 400, "message": "id doesnt exist" })
     }
 
 }
@@ -49,7 +50,7 @@ const editSubcategory = async (req,res) => {
         const ifProductsExist = await Product.findAll({
             where: {
                 category_id: req.categoryId,
-                subcategory_id:null
+                subcategory_id: null
 
             }
         })
@@ -57,7 +58,10 @@ const editSubcategory = async (req,res) => {
             return res.status(400).send({ "error": 400, "message": "cannot add subcategories for catgeories having products under it" })
 
         }
-        const updateSubcategory = await Subcategory.update({ name:name, category_id: req.categoryId,}, {
+        const updateSubcategory = await Subcategory.update({ 
+            name, 
+            category_id: req.categoryId
+        }, {
             where: {
                 id: req.params.id
             },
@@ -65,18 +69,18 @@ const editSubcategory = async (req,res) => {
         })
         await clearCache('subcategoriesKey')
         log.info('Outgoin response from editSubcategory', {"response": updateSubcategory[1][0].dataValues})
-
         res.status(200).send({"success": 200, "message": "Subcategory edited successfully by admin", "data": updateSubcategory[1][0].dataValues})
     }
     catch(err) {
         log.error('Error accesssing editSubcategory', {"error": err.message})
         if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+            return res.status(400).send({"error": 400, "message":  err.errors[0].message})
         }
-        else{
-            res.status(400).send({"error": 400, "message": 'id doesnt exist' })
+        if(err.message == "subcategory name already exist") {
+            return res.status(400).send({ "error": 400, "message": err.message })
 
-        }}
+        }
+        return res.status(400).send({ "error": 400, "message": "id doesnt exist" })}
 
 }
 
