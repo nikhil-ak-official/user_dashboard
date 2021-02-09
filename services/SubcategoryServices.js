@@ -3,7 +3,6 @@ const Product = require('../models/product')
 const Subcategory = require('..//models/subcategory')
 const log = require('../logs/logger')
 const Category = require('../models/category')
-const getCategoryId = require('../middleware/getCategoryId')
 
 const createSubcategory = async (req,res) => {
     try {
@@ -75,6 +74,7 @@ const editSubcategory = async (req,res) => {
 
         }
         return res.status(400).send({ "error": 400, "message": "id doesnt exist" })
+    }
 }
 
 const deleteSubcategory = async(req,res) => {
@@ -145,6 +145,6 @@ const countSubcategory = async(req,res) => {
 
         }
     }
-}
-
+};
+    
 module.exports = {createSubcategory,editSubcategory,deleteSubcategory,listOfSubs,countSubcategory}
