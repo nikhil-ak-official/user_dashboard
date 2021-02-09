@@ -29,12 +29,13 @@ const createSubcategory = async (req,res) => {
     catch(err) {
         log.error('Error accesssing subcategory', {"error":  err.message})
         if(err.errors) {
-            res.status(400).send({"error": 400, "message":  err.errors[0].message})
+            return res.status(400).send({"error": 400, "message":  err.errors[0].message})
         }
-        else{
-            res.status(400).send({"error": 400, "message": err.message })
+        if(err.message == "subcategory name already exist") {
+            return res.status(400).send({ "error": 400, "message": err.message })
 
         }
+        return res.status(400).send({ "error": 400, "message": "id doesnt exist" })
     }
 
 }
@@ -75,6 +76,7 @@ const editSubcategory = async (req,res) => {
 
         }
         return res.status(400).send({ "error": 400, "message": "id doesnt exist" })
+    }
 }
 
 const deleteSubcategory = async(req,res) => {
