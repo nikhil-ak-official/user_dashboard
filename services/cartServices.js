@@ -5,8 +5,7 @@ const Product = require('../models/product')
 const Cart = require('../models/cart')
 const ProductsCart = require('../models/productscart')
 const { Sequelize } = require('sequelize')
-
-
+const Trending = require('../models/trending')
 
 const addToCart = async(req,res) => {
     try{
@@ -52,7 +51,20 @@ const addToCart = async(req,res) => {
                     product_quantity: req.body.productQuantity
                 })
             }
-           
+            const ifProductTrending = await Trending.findAll({
+                where: {
+                    product_id: getProductDetails.id
+                }
+            })     
+            if(ifProductTrending.length == 0) {
+                const addTrending = await Trending.create({
+                    product_id: getProductDetails.id,
+                    count: 1
+                })
+            }
+            else {
+                await Trending.increment({count: 1}, { where: { product_id: getProductDetails.id}})
+            }      
             log.info('Outgoin response from addtocart', {"response": mapToProduct.dataValues})
             res.status(201).send({"success": 201, "message": "Added product to cart successfully", "data": mapToProduct.dataValues})
         } 
@@ -81,8 +93,13 @@ const removeFromCart = async(req,res)=> {
         const cartId = await Cart.findOne({
             where: {
                 user_id:req.user.id
+            },
+            include: {
+                model: Product
             }
         })
+        const productList = cartId.Products.map(e => {return e.id})
+        console.log(productList);
         if(req.params.id) {
             
             const removeProduct = await ProductsCart.destroy({
@@ -91,6 +108,7 @@ const removeFromCart = async(req,res)=> {
                     cart_id: cartId.id
                 }
             })
+            await Trending.decrement({count: 1}, { where: { product_id: req.params.id}})
             log.info('Outgoin response from removefromcart', {"response": "Product removed from cart successfully"})
             res.status(200).send({"success": 200, "message": "Product removed from cart successfully"})
 
@@ -101,6 +119,7 @@ const removeFromCart = async(req,res)=> {
                     cart_id: cartId.id
                 }
             })
+            await Trending.decrement({count: 1}, { where: { product_id: productList}})
             log.info('Outgoin response from removefromcart', {"response":"All products removed from cart successfully"})
             res.status(200).send({"success": 200, "message": "All products removed from cart successfully"})
         }
@@ -181,26 +200,12 @@ const getAllFromCart = async(req,res) => {
 const recommendedProducts = async(req,res) => {
     try {
         log.info('Incoming request to recommendedProducts')
-        const recommended = await Cart.findAll({
-            where: {
-                user_id: req.user.id
-            },
-            attributes: [],            
-            include: {
-                model: Product,
-                group: ['category_id'],
-                attributes: ['id', 'name', 'category_id','subcategory_id',
-            [Sequelize.literal('(RANK() OVER (ORDER BY Products.category_id DESC))'), 'rank']],
-
-                through: {
-                    attributes: ['product_quantity']
-                }
-                
-            }
+        const allCart = await Product.findAll({
+            group: [Sequelize.literal(''), 'groupby']
         })
     
-        log.info('Outgoin response from recommendedProducts', {"response": recommended})
-        res.status(200).send({"success": 200, "message": "recommended products", "data": recommended})
+        log.info('Outgoin response from recommendedProducts', {"response": allCart})
+        res.status(200).send({"success": 200, "message": "recommended products", "data": allCart})
     }
     catch(err){
     log.error('Error accesssing trendingProducts', {"error":  err.message})
@@ -213,7 +218,10 @@ const trendingProducts = async(req,res) => {
         log.info('Incoming request to trendingProducts')
         const trending = await ProductsCart.findAll({
             group: ['product_id'],
-            attributes: ['product_id',[Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']]
+            attributes: ['product_id',[Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']],
+            include: {
+                model: Product
+            }
         })
     
         log.info('Outgoin response from trendingProducts', {"response": trending})

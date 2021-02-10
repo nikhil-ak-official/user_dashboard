@@ -14,8 +14,8 @@ mysqlConnection.authenticate()
 .then(() => console.log('Connected to database'))
 .catch((err) =>  console.log('Cannot connect', err));
 
-// (async() => {
-//     await mysqlConnection.sync({force: true})
-// })();
+(async() => {
+    await mysqlConnection.sync({force: true})
+})();
 
 module.exports = mysqlConnection

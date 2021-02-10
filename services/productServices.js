@@ -7,6 +7,7 @@ const fs = require('fs')
 const { Op, Sequelize } = require('sequelize')
 const Cart = require('../models/cart')
 const ProductsCart = require('../models/productscart')
+const Trending = require('../models/trending')
 
 
 const createProduct = async (req, res) => {
@@ -312,6 +313,14 @@ const productsHome = async (req, res) => {
             include: {
                 model: Product,
                 limit: 10
+            }
+        })
+        const trendingProducts = await Trending.findAll({
+            attributes: ['id'],
+            limit: 10,
+            order: [['count', 'DESC']],
+            include: {
+                model:Product
             }
         })
         // await setAsync('key', homeProducts)
