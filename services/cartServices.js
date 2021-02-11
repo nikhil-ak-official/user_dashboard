@@ -8,16 +8,22 @@ const { Sequelize } = require('sequelize')
 const Trending = require('../models/trending')
 
 const addToCart = async(req,res) => {
-    try{
-        log.info('Incoming request to addtocart', {"request": req.body})
+    try {
+        log.info('Incoming request to addtocart', { "request": req.body })
         const getProductDetails = await Product.findOne({
             where: {
                 name: req.body.productName
             }
         })
-        if(getProductDetails) {
-            if(getProductDetails.quantity < req.body.productQuantity) {
-                return res.status(400).send({"error": 400, "message": "quantity should be less than available quantity"})
+        const ifProductTrending = await Trending.findAll({
+            where: {
+                product_id: getProductDetails.id
+            }
+        })    
+        
+        if (getProductDetails && req.body.productQuantity) {
+            if (getProductDetails.quantity < req.body.productQuantity) {
+                return res.status(400).send({ "error": 400, "message": "quantity should be less than available quantity" })
             }
             const cartId = await Cart.findAll(
                 {
@@ -27,13 +33,24 @@ const addToCart = async(req,res) => {
                 }
             )
             let mapToProduct
-            if(cartId.length == 0) {
-                const addCart = await Cart.create({user_id: req.user.id})
+            if (cartId.length == 0) {
+                const addCart = await Cart.create({ user_id: req.user.id })
                 mapToProduct = await ProductsCart.create({
                     product_id: getProductDetails.id,
                     cart_id: addCart.dataValues.id,
                     product_quantity: req.body.productQuantity
                 })
+                if(ifProductTrending.length == 0) {
+                    const addTrending = await Trending.create({
+                        product_id: getProductDetails.id,
+                        count: 1
+                    })
+                }
+                else {
+                    await Trending.increment({count: 1}, { where: { product_id: getProductDetails.id}})
+                }         
+                log.info('Outgoin response from addtocart', { "response": mapToProduct.dataValues })
+                res.status(201).send({ "success": 201, "message": "Added product to cart successfully", "data": mapToProduct.dataValues })
 
             }
             else {
@@ -45,32 +62,56 @@ const addToCart = async(req,res) => {
                     },
                     individualHooks: true
                 })
-                mapToProduct = await ProductsCart.create({
-                    product_id: getProductDetails.id,
-                    cart_id: updateCart[1][0].dataValues.id,
-                    product_quantity: req.body.productQuantity
+                const ifProductExist = await ProductsCart.findAll({
+                    where: {
+                        cart_id: updateCart[1][0].dataValues.id,
+                        product_id: getProductDetails.id
+                    }
                 })
-            }
-            const ifProductTrending = await Trending.findAll({
-                where: {
-                    product_id: getProductDetails.id
+                if (ifProductExist.length != 0) {
+                    if (ifProductExist[0].product_quantity + parseInt(req.body.productQuantity) > getProductDetails.quantity) {
+                        return res.status(400).send({ "error": 400, "message": "quantity should be less than available quantity" })
+
+                    }
+                    const updateProductInCart = await ProductsCart.update({
+                        product_quantity: ifProductExist[0].product_quantity + parseInt(req.body.productQuantity)
+
+                    }, {
+                        where: {
+                            cart_id: updateCart[1][0].dataValues.id,
+                            product_id: getProductDetails.id
+                        },
+                        individualHooks: true
+
+                    })
+                    log.info('Outgoin response from addtocart', { "response": updateProductInCart[1][0].dataValues })
+                    res.status(201).send({ "success": 201, "message": "Added product to cart successfully", "data": updateProductInCart[1][0].dataValues })
                 }
-            })     
-            if(ifProductTrending.length == 0) {
-                const addTrending = await Trending.create({
-                    product_id: getProductDetails.id,
-                    count: 1
-                })
+                else {
+                    mapToProduct = await ProductsCart.create({
+                        product_id: getProductDetails.id,
+                        cart_id: updateCart[1][0].dataValues.id,
+                        product_quantity: req.body.productQuantity
+                    })
+                    if(ifProductTrending.length == 0) {
+                        const addTrending = await Trending.create({
+                            product_id: getProductDetails.id,
+                            count: 1
+                        })
+                    }
+                    else {
+                        await Trending.increment({count: 1}, { where: { product_id: getProductDetails.id}})
+                    }      
+                    log.info('Outgoin response from addtocart', { "response": mapToProduct.dataValues })
+                    res.status(201).send({ "success": 201, "message": "Added product to cart successfully", "data": mapToProduct.dataValues })
+                }
+
             }
-            else {
-                await Trending.increment({count: 1}, { where: { product_id: getProductDetails.id}})
-            }      
-            log.info('Outgoin response from addtocart', {"response": mapToProduct.dataValues})
-            res.status(201).send({"success": 201, "message": "Added product to cart successfully", "data": mapToProduct.dataValues})
-        } 
+
+        }
         else {
-            log.error('Error response from addtocart', {"error": req.categoryId})
-            res.status(400).send({"error": 400, "message": "product doesnt exist"})
+            log.error('Error response from addtocart', { "error": "product doesnt exist" })
+            res.status(400).send({ "error": 400, "message": "product doesnt exist" })
         }
     }
     catch(err){
@@ -197,39 +238,6 @@ const getAllFromCart = async(req,res) => {
     }
 }
 
-const recommendedProducts = async(req,res) => {
-    try {
-        log.info('Incoming request to recommendedProducts')
-        const allCart = await Product.findAll({
-            group: ['category_id'],
-        })
-        log.info('Outgoin response from recommendedProducts', {"response": allCart})
-        res.status(200).send({"success": 200, "message": "recommended products", "data": allCart})
-    }
-    catch(err){
-    log.error('Error accesssing trendingProducts', {"error":  err.message})
-    res.status(400).send({"error": 400, "message": err.message })
-    }
-}
 
-const trendingProducts = async(req,res) => {
-    try {
-        log.info('Incoming request to trendingProducts')
-        const trending = await ProductsCart.findAll({
-            group: ['product_id'],
-            attributes: ['product_id',[Sequelize.literal('(RANK() OVER (ORDER BY COUNT(ProductsCarts.product_id) DESC))'), 'rank']],
-            include: {
-                model: Product
-            }
-        })
-    
-        log.info('Outgoin response from trendingProducts', {"response": trending})
-        res.status(200).send({"success": 200, "message": "trending products", "data": trending})
-    }
-    catch(err){
-    log.error('Error accesssing trendingProducts', {"error":  err.message})
-    res.status(400).send({"error": 400, "message": err.message })
-    }
-}
 
-module.exports = {addToCart, removeFromCart, editFromCart, getAllFromCart, recommendedProducts, trendingProducts}
+module.exports = {addToCart, removeFromCart, editFromCart, getAllFromCart}
