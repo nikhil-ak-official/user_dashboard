@@ -35,7 +35,8 @@ const Trending = mysqlConnection.define('Trendings', {
 
 // associations
 
-Trending.hasOne(Product, {foreignKey: 'product_id'});
-Product.belongsTo(Trending, {foreignKey: 'product_id'});
+Product.hasMany(Trending, {foreignKey: 'product_id'});
+Trending.belongsTo(Product, {foreignKey: 'product_id'});
+
 
 module.exports = Trending

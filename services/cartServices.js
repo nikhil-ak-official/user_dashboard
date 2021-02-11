@@ -201,9 +201,8 @@ const recommendedProducts = async(req,res) => {
     try {
         log.info('Incoming request to recommendedProducts')
         const allCart = await Product.findAll({
-            group: [Sequelize.literal(''), 'groupby']
+            group: ['category_id'],
         })
-    
         log.info('Outgoin response from recommendedProducts', {"response": allCart})
         res.status(200).send({"success": 200, "message": "recommended products", "data": allCart})
     }

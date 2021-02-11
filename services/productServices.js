@@ -316,7 +316,6 @@ const productsHome = async (req, res) => {
             }
         })
         const trendingProducts = await Trending.findAll({
-            attributes: ['id'],
             limit: 10,
             order: [['count', 'DESC']],
             include: {
@@ -324,8 +323,8 @@ const productsHome = async (req, res) => {
             }
         })
         // await setAsync('key', homeProducts)
-        log.info('Outgoin response from productsHome', { "respone": homeProducts })
-        res.status(200).send({ "success": 200, "message": "Home page content", "data": homeProducts })
+        log.info('Outgoin response from productsHome', { "respone": {trendingProducts, homeProducts} })
+        res.status(200).send({ "success": 200, "message": "Home page content", "data": {trendingProducts, homeProducts} })
     }
     catch (err) {
         log.error('Error accesssing productsHome', { "error": err })
