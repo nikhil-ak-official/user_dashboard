@@ -26,3 +26,5 @@ const port = process.env.PORT
 app.listen(port , () => {
     console.log("server running at", port);
 });
+
+// sudo code --user-data-dir="~/.vscode-root"
